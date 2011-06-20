@@ -1,0 +1,26 @@
+// (c) 2011 Richard Carter
+// This code is licensed under the MIT license; see LICENSE.txt for details.
+
+global.nodebot_prefs = {
+	realname: 'Nodebot v0.8',
+	nickname: 'nodebot1337',
+	
+	/* NickServ details, case-insensitive.
+	 * Note: regex characters must be escaped, as these values are placed
+	 * into a regex (not the password).
+	 */
+	nickserv_nickname: 'NickServ',
+	nickserv_hostname: 'NickServ@services\\.',
+	nickserv_password: 'password',
+	
+	command_prefix: '~', /* not yet implemented; ~ is the hardcoded prefix */
+	server: 'irc.freenode.net',
+	port: 6667,
+	secret: 'secret', /* password to become admin */
+	
+	default_location: '90210',
+	
+	/* bitly.js */
+	bitly_username: '',
+	bitly_apikey: ''
+};
