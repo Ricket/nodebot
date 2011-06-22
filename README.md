@@ -5,7 +5,7 @@ Prerequisites
 -------------
 
 - node.js: v0.4.8 was used for development and testing of this bot.
-- jsdom: used by the googleweather.js lib which is used by the weather.js script, can be installed with `npm install jsdom`
+- request and jsdom: used by the googleweather.js lib which is used by the weather.js script, can be installed with `npm install request` and `npm install jsdom`
 - translate: used by the translate.js script, can be installed with `npm install translate`
 
 Configuration
