@@ -5,7 +5,7 @@
 //     ~tell someone something - Saves the message to tell the person when they get back
 //     On user join, looks to see if the new person has any saved messages and if so, says them
 
-listen(/PRIVMSG (#[^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
+listen(/PRIVMSG ([^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
 	// save message into the tell folder
 	// irc.privmsg(match[1], "I'll tell them when they get back.");
 });

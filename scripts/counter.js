@@ -7,11 +7,11 @@
 //     ~decrement - decrements the number
 
 var count = 0;
-listen(/PRIVMSG (#[^ ]+) :~increment$/i, function(match, data, replyTo) {
+listen(/PRIVMSG [^ ]+ :~increment$/i, function(match, data, replyTo) {
 	count++;
 	irc.privmsg(replyTo, "The count is now "+count);
 });
-listen(/PRIVMSG (#[^ ]+) :~decrement$/i, function(match, data, replyTo) {
+listen(/PRIVMSG [^ ]+ :~decrement$/i, function(match, data, replyTo) {
 	count--;
 	irc.privmsg(replyTo, "The count is now "+count);
 });

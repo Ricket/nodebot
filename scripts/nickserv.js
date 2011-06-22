@@ -4,6 +4,6 @@
 // This script handles the following functions:
 //     Listens for "This nickname is registered" from NickServ (in config.js) and replies with an IDENTIFY message.
 
-listen(new RegExp(':'+nodebot_prefs.nickserv_nickname+'!'+nodebot_prefs.nickserv_hostname+' NOTICE [^ ]+ :This nickname is registered.*$','i'), function(match, data, replyTo) {
+listen(new RegExp('^:'+nodebot_prefs.nickserv_nickname+'!'+nodebot_prefs.nickserv_hostname+' NOTICE [^ ]+ :This nickname is registered','i'), function(match, data, replyTo) {
 	irc.privmsg('NickServ', 'IDENTIFY '+nodebot_prefs.nickserv_password);
 });
