@@ -11,7 +11,7 @@ Prerequisites
 Configuration
 -------------
 
-See `config.js` for all configuration options. You can disable scripts by renaming them to a different extension or deleting/moving them out of the scripts folder.
+Copy `config.js.sample` to `config.js` and then look in the file for all configuration options. You can disable scripts by renaming them to a different extension or deleting/moving them out of the scripts folder.
 
 Running
 -------
