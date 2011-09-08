@@ -12,7 +12,7 @@ var exec = require('child_process').exec;
 listen(/PRIVMSG [^ ]+ :~(calc|eval|math) (.*)$/i, function(match, data, replyTo) {
 	var child = exec('node scripts/calc.js.child',
 		{ encoding: 'ascii',
-			timeout: 5000 },
+			timeout: 500 },
 		function (error, stdout, stderr) {
 			if(error != null) {
 				irc.privmsg(replyTo, stdout);
