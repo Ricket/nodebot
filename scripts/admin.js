@@ -109,7 +109,24 @@ listen_admin(/~ignorelist$/i, function (match, data, replyTo) {
 	irc.chatignorelist(replyTo);
 });
 
-listen_admin(/^:([^!]+)!.*~reload$/i, function(match) {
+var exec = require('child_process').exec;
+listen_admin(/~git pull$/i, function(match, data, replyTo) {
+	exec('git pull', function(error, stdout, stderr) {
+		var feedback;
+		if(error != null) {
+			feedback = "Error: ";
+		} else {
+			feedback = "Result: ";
+		}
+
+		var stdouts = stdout.replace(/\n$/,"").split("\n");
+		feedback += stdouts[stdouts.length-1];
+		
+		irc.privmsg(replyTo, feedback);
+	});
+});
+
+listen_admin(/~reload$/i, function(match, data, replyTo) {
 	irc.loadScripts();
-        irc.privmsg(match[1], "Reloaded scripts");
+	irc.privmsg(replyTo, "Reloaded scripts");
 });
