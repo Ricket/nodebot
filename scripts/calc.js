@@ -6,14 +6,22 @@
 //     When some apparent math is found (matching numbers, parentheses and math operators), tries to solve it and says the answer;
 //         this way, if someone says a sentence with some math in it, the bot will solve the math for them. How helpful!
 
+var vm = require('vm');
+var exec = require('child_process').exec;
+
 listen(/PRIVMSG [^ ]+ :~(calc|eval|math) (.*)$/i, function(match, data, replyTo) {
-	try {
-		var result = vm.runInNewContext(match[2]);
-		irc.privmsg(replyTo, "Result: "+result);
-	} catch(err) {
-		irc.privmsg(replyTo, "Error: "+err);
-	}
-	
+	var child = exec('node scripts/calc.js.child',
+		{ encoding: 'ascii',
+			timeout: 5000 },
+		function (error, stdout, stderr) {
+			if(error != null) {
+				irc.privmsg(replyTo, stdout);
+			} else {
+				irc.privmsg(replyTo, "Result: "+stdout);
+			}
+		}
+	);
+	child.stdin.end(match[2]);
 });
 
 listen(/PRIVMSG [^ ]+ :(?!~(calc|eval|math)).*?([()\d]+(?:[()+\-*\/][0-9]+[()]*)+)/i, function(match, data, replyTo) {
