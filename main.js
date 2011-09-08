@@ -8,7 +8,6 @@ var net = require('net');
 var fs = require('fs');
 var vm = require('vm');
 var repl = require('repl');
-var process = require('process');
 
 var irc = global.nodebot = (function(){
 	var socket = new net.Socket();
@@ -207,8 +206,6 @@ var irc = global.nodebot = (function(){
 		}
 	}
 })();
-
-var tryingScript; // array; 0=replyTo, 1=scriptName
 
 process.on('uncaughtException', function (err) {
 	console.log("caught error in script");
