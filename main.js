@@ -184,7 +184,7 @@ var irc = global.nodebot = (function(){
 		},
 		action: function(channel, action) {
 			if(!channel || !action) return;
-			irc.privmsg(channel, '\x01ACTION '+action+'\x01');
+			send("PRIVMSG "+sanitize(channel)+" :\x01ACTION "+sanitize(action)+"\x01");
 		},
 		
 		/* ADDITIONAL GLOBAL IRC FUNCTIONALITY */
