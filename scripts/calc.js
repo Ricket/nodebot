@@ -5,6 +5,7 @@
 //     ~calc|eval|math expression - evaluates expression as javascript within an empty sandbox; can be used like a calculator
 //     When some apparent math is found (matching numbers, parentheses and math operators), tries to solve it and says the answer;
 //         this way, if someone says a sentence with some math in it, the bot will solve the math for them. How helpful!
+//         (edit: it ended up being more annoying than helpful, and has been commented out)
 
 var vm = require('vm');
 var exec = require('child_process').exec;
@@ -24,6 +25,7 @@ listen(/PRIVMSG [^ ]+ :~(calc|eval|math) (.*)$/i, function(match, data, replyTo)
 	child.stdin.end(match[2]);
 });
 
+/* this feature ended up being kinda annoying
 listen(/PRIVMSG [^ ]+ :(?!~(calc|eval|math)).*?([()\d]+(?:[()+\-*\/][0-9]+[()]*)+)/i, function(match, data, replyTo) {
 	try {
 		var result = vm.runInNewContext(match[2]);
@@ -33,3 +35,4 @@ listen(/PRIVMSG [^ ]+ :(?!~(calc|eval|math)).*?([()\d]+(?:[()+\-*\/][0-9]+[()]*)
 		console.log(err);
 	}
 });
+*/
