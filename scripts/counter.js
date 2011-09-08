@@ -17,9 +17,9 @@ listen(/~decrement$/i, function(match, data, replyTo) {
 });
 listen(/~reset ([0-9]+)$/i, function(match, data, replyTo) {
 	count = parseInt(match[1]);
-	saycount();
+	saycount(replyTo);
 });
 
-function saycount() {
+function saycount(replyTo) {
 	irc.privmsg(replyTo, "The count is now "+count);
 }
