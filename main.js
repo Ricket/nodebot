@@ -100,6 +100,10 @@ var irc = global.nodebot = (function(){
 		}
 	}
 	
+	function sanitize(data) {
+		return data.replace(/\n/g, "\\n");
+	}
+	
 	return {
 		/*raw: function(stuff) {
 			send(stuff);
@@ -107,8 +111,8 @@ var irc = global.nodebot = (function(){
 		connect: function(host, port, nickname, username, realname) {
 			var port = port || 6667;
 			socket.connect(port, host, function () {
-				send('NICK '+nickname);
-				send('USER '+username+' localhost * '+realname);
+				send('NICK '+sanitize(nickname));
+				send('USER '+sanitize(username)+' localhost * '+sanitize(realname));
 			});
 			
 		},
@@ -163,16 +167,18 @@ var irc = global.nodebot = (function(){
 			send("PONG :"+server);
 		},
 		join: function(channel, key) {
-			var cmd = "JOIN :"+channel;
-			if(key) cmd += " "+key;
+			var cmd = "JOIN :"+sanitize(channel);
+			if(key) {
+				cmd += " "+sanitize(key);
+			}
 			send(cmd);
 		},
 		part: function(channel) {
-			send("PART :"+channel);
+			send("PART :"+sanitize(channel));
 		},
 		privmsg: function(user, message) {
 			// TODO split message into chunks so it doesn't exceed max length
-			send("PRIVMSG "+user+" :"+message);
+			send("PRIVMSG "+sanitize(user)+" :"+sanitize(message));
 		},
 		action: function(channel, action) {
 			irc.privmsg(channel, '\x01ACTION '+action+'\x01');
@@ -193,7 +199,7 @@ var irc = global.nodebot = (function(){
 			fs.writeFileSync('data/ignore.txt', ignorelist.join('\n'), 'ascii');
 		},
 		chatignorelist: function(channel) {
-			irc.chatmsg(channel, "Ignore list: "+ignorelist.join(","));
+			irc.chatmsg(channel, "Ignore list: "+sanitize(ignorelist.join(",")));
 		}
 	}
 })();
