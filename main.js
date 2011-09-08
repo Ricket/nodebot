@@ -8,6 +8,7 @@ var net = require('net');
 var fs = require('fs');
 var vm = require('vm');
 var repl = require('repl');
+var process = require('process');
 
 var irc = global.nodebot = (function(){
 	var socket = new net.Socket();
@@ -101,6 +102,7 @@ var irc = global.nodebot = (function(){
 	}
 	
 	function sanitize(data) {
+		if(!data) return data;
 		return data.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[^\x20-\x7e]/g, "");
 	}
 	
@@ -177,10 +179,12 @@ var irc = global.nodebot = (function(){
 			send("PART :"+sanitize(channel));
 		},
 		privmsg: function(user, message) {
+			if(!user || !message) return;
 			// TODO split message into chunks so it doesn't exceed max length
 			send("PRIVMSG "+sanitize(user)+" :"+sanitize(message));
 		},
 		action: function(channel, action) {
+			if(!channel || !action) return;
 			irc.privmsg(channel, '\x01ACTION '+action+'\x01');
 		},
 		
@@ -203,6 +207,12 @@ var irc = global.nodebot = (function(){
 		}
 	}
 })();
+
+var tryingScript; // array; 0=replyTo, 1=scriptName
+
+process.on('uncaughtException', function (err) {
+	console.log("caught error in script");
+});
 
 irc.loadScripts();
 irc.connect(nodebot_prefs.server, nodebot_prefs.port, nodebot_prefs.nickname, nodebot_prefs.nickname, nodebot_prefs.realname);
