@@ -111,4 +111,5 @@ listen_admin(/~ignorelist$/i, function (match, data, replyTo) {
 
 listen_admin(/^:([^!]+)!.*~reload$/i, function(match) {
 	irc.loadScripts();
+        irc.privmsg(match[1], "Reloaded scripts");
 });
