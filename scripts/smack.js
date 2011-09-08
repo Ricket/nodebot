@@ -6,7 +6,7 @@
 
 var smackobjects = ["smelly fish", "tin pot", "frying pan", "mouse", "keyboard", "fly swatter", "old boot"];
 
-listen(/PRIVMSG [^ ]+ :~smack (.*)$/i, function(match, data, replyTo) {
+listen(/^:([^!]+)!.*PRIVMSG [^ ]+ :~smack (.*)$/i, function(match, data, replyTo) {
 	var smackidx = Math.floor(Math.random()*smackobjects.length);
 	if(match[2].toUpperCase() == "ME" || match[2].toUpperCase() == "YOU" ||
 			match[2].toUpperCase() == "HIMSELF" || 
