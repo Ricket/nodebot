@@ -101,7 +101,7 @@ var irc = global.nodebot = (function(){
 	}
 	
 	function sanitize(data) {
-		return data.replace(/\n/g, "\\n");
+		return data.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
 	}
 	
 	return {
