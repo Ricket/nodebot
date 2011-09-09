@@ -15,13 +15,20 @@ listen(/~(?:dice|roll) (.+)$/i, function(match, data, replyTo) {
 		if(match[1].indexOf('d') > -1) {
 			var params = match[1].split('d');
 			roll(parseInt(params[0]), parseInt(params[1]), replyTo);
+			return;
 		}
 	} catch(err) {
-		irc.privmsg(replyTo, "Usage: ~dice [XdY] - where X is number of dice and Y is sides per die");
+		// fall through to the help message
 	}
+	irc.privmsg(replyTo, "Usage: ~dice [XdY] - where X is number of dice (up to 20) and Y is sides per die");
 });
 
 function roll(dice, faces, replyTo) {
+	dice = Math.max(dice, 1);
+	dice = Math.min(dice, 20);
+	faces = Math.max(faces, 1);
+	faces = Math.min(faces, 10000);
+	
 	var results = [];
 	for(var i=0; i<dice; i++) {
 		results.push(""+(Math.floor(Math.random()*faces)+1));
