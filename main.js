@@ -7,15 +7,19 @@ var util = require('util'),
 	fs = require('fs');
 	vm = require('vm');
 	repl = require('repl');
+
 var irc = global.nodebot = (function () {
     var socket = new net.Socket();
     socket.setNoDelay(true);
     socket.setEncoding('ascii');
+
     var buffer = {
         b: new Buffer(4096),
         size: 0
     };
+
     var listeners = [];
+
     var ignorelist;
     try {
         ignorelist = fs.readFileSync('data/ignore.txt', 'ascii');
@@ -39,6 +43,7 @@ var irc = global.nodebot = (function () {
             console.log("-> " + data);
         });
     }
+
     socket.on('data', function (data) {
         data = data.replace('\r', '');
         var newlineIdx;
@@ -111,6 +116,7 @@ var irc = global.nodebot = (function () {
 		 */
         return data.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[^\x02-\x03|\x16|\x20-\x7e]/g, "");
     }
+
     return {
 		/* The following function would give full power to scripts;
 		 * this is probably not desirable, but can sometimes be good
@@ -172,6 +178,7 @@ var irc = global.nodebot = (function () {
             } catch (err) {}
             console.log("Scripts loaded.");
         },
+
         /* IRC COMMANDS: */
         pong: function (server) {
             send("PONG :" + server);
@@ -195,6 +202,7 @@ var irc = global.nodebot = (function () {
             if (!channel || !action) return;
             send("PRIVMSG " + sanitize(channel) + " :\x01ACTION " + sanitize(action) + "\x01");
         },
+
         /* ADDITIONAL GLOBAL IRC FUNCTIONALITY */
         ignore: function (user) {
             ignorelist.push(user);
