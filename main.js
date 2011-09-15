@@ -6,7 +6,8 @@ var util = require('util'),
 	net = require('net');
 	fs = require('fs');
 	vm = require('vm');
-	repl = require('repl');
+	repl = require('repl'),
+	listdb = require('./lib/listdb');
 
 var irc = global.nodebot = (function () {
     var socket = new net.Socket();
@@ -20,16 +21,7 @@ var irc = global.nodebot = (function () {
 
     var listeners = [];
 
-    var ignorelist;
-    try {
-        ignorelist = fs.readFileSync('data/ignore.txt', 'ascii');
-        if (!ignorelist) {
-			ignorelist = "";
-		}
-        ignorelist = ignorelist.split('\n');
-    } catch (err) {
-        ignorelist = [];
-    }
+	var ignoredb = listdb.getDB('ignore');
 
     function send(data) {
 		if(!data || data.length == 0) {
@@ -68,12 +60,9 @@ var irc = global.nodebot = (function () {
 		var i;
         if (user) {
             user = user[1];
-            for (i = 0; i < ignorelist.length; i++) {
-                if (ignorelist[i].toUpperCase() == user.toUpperCase()) {
-                    // user is ignored
-                    return;
-                }
-            }
+			if(ignoredb.hasValue(user, true)) {
+				return;
+			}
         }
         var replyTo = null;
         if (data.indexOf('PRIVMSG') > -1) {
@@ -205,21 +194,13 @@ var irc = global.nodebot = (function () {
 
         /* ADDITIONAL GLOBAL IRC FUNCTIONALITY */
         ignore: function (user) {
-            ignorelist.push(user);
-            fs.writeFileSync('data/ignore.txt', ignorelist.join('\n'), 'ascii');
+			ignoredb.add(user);
         },
         unignore: function (user) {
-			var i;
-            for (i = 0; i < ignorelist.length; i++) {
-                if (ignorelist[i].toUpperCase() == user.toUpperCase()) {
-                    ignorelist.splice(i, 1);
-                    i--;
-                }
-            }
-            fs.writeFileSync('data/ignore.txt', ignorelist.join('\n'), 'ascii');
+			ignoredb.remove(user, true);
         },
         chatignorelist: function (channel) {
-            irc.chatmsg(channel, "Ignore list: " + sanitize(ignorelist.join(",")));
+            irc.chatmsg(channel, "Ignore list: " + sanitize(ignoredb.getAll().join(",")));
         }
     }
 })(); // end of object 'irc'

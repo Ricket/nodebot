@@ -8,47 +8,33 @@
 //     ~unautojoin channel - remove channel from autojoin.txt
 //     ~part [channel] - part channel (current channel if not specified)
 
+var db = require('./lib/listdb').getDB('autojoin');
+
 listen(/376/i, function(match) {
 	// 376 is the end of MOTD
-	var channels = fs.readFileSync('data/autojoin.txt', 'ascii');
-	if(channels) {
-		channels = channels.split('\n');
-		for(var i=0; i<channels.length; i++) {
-			var channel = channels[i];
-			channel = channel.replace('\r','');
-			if(channel.indexOf('#') != 0) continue;
-			irc.join(channel);
-		}
+	var channels = db.getAll();
+	var i;
+	for(i in channels) {
+		irc.join(channels[i]);
 	}
-}, true);
+}, true /* (one time only) */);
 
 listen(/~join (#.+)$/i, function(match, data, replyTo) {
 	irc.join(match[1]);
 });
 
 listen(/~autojoin (#.+)$/i, function(match, data, replyTo) {
-	var channels = fs.readFileSync('data/autojoin.txt', 'ascii');
-	if(!channels) channels = "";
-	channels = channels.split("\n");
-	channels.push(match[1]);
-	fs.writeFileSync('data/autojoin.txt', channels.join('\n'), 'ascii');
+	db.add(match[1]);
 });
 
 listen(/~unautojoin (#.+)$/i, function(match, data, replyTo) {
-	var channels = fs.readFileSync('data/autojoin.txt', 'ascii');
-	if(!channels) channels = "";
-	channels = channels.split("\n");
-	for(var i=0; i<channels.length; i++) {
-		if(channels[i].toUpperCase() == match[1].toUpperCase()) {
-			channels.splice(i,1);
-			i--;
-		}
-	}
-	fs.writeFileSync('data/autojoin.txt', channels.join('\n'), 'ascii');
+	db.remove(match[1], true /* (ignore case) */);
 });
 
 listen(/~part$/i, function(match, data, replyTo) {
-	irc.part(replyTo);
+	if(replyTo.indexOf('#') == 0) {
+		irc.part(replyTo);
+	}
 });
 
 listen(/~part (#.+)$/i, function(match, data, replyTo) {

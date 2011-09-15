@@ -5,35 +5,33 @@
 //     ~tell someone something - Saves the message to tell the person when they get back
 //     On user join, looks to see if the new person has any saved messages and if so, says them
 
-var messages;
-try {
-        messages = fs.readFileSync('data/tell.txt', 'ascii');
-        if(!messages) messages = "";
-        messages = messages.split('\n');
-} catch(err) {messages = [];}
+var db = require('./lib/listdb').getDB('messages');
 
 function addMessage(room, user, message) {
-        messages.push(room+"#"+user+": "+message);
-
-        fs.writeFileSync('data/tell.txt', messages.join('\n'), 'ascii');
+	db.add(room+"@"+user+": "+message);
 }
 
 function getMessages(room, user) {
-        var userMessages = [];
-		var searchString = room+"#"+user+": ";
-        for(var i=0; i<messages.length; i++) {
-                var idx = messages[i].toLowerCase().indexOf(searchString.toLowerCase());
-                if(idx == 0) {
-                        userMessages.push(messages[i].substr(searchString.length));
-                        messages.splice(i, 1);
-                        i--;
-                }
-        }
-        return userMessages;
+	var userMessages = [];
+	var prefix = room+"@"+user+": ";
+	
+	var messages = db.getAll();
+	var i;
+	for(i in messages) {
+		if(messages[i].toLowerCase().indexOf(prefix.toLowerCase()) == 0) {
+			userMessages.push(messages[i].substr(prefix.length));
+		}
+	}
+	
+	for(i in userMessages) {
+		db.remove(userMessages[i], true);
+	}
+	
+	return userMessages;
 }
 
 listen(/:([^!]+)!.*PRIVMSG ([^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
-        addMessage(match[2], match[3], match[1]+" told me to tell you: "+match[4]);
+	addMessage(match[2], match[3], "message from "+match[1]+": "+match[4]);
 
 	irc.privmsg(match[2], "I'll tell them when they get back.");
 });
@@ -41,8 +39,9 @@ listen(/:([^!]+)!.*PRIVMSG ([^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
 // listen for join
 listen(/:([^!]+)!.*JOIN :(.*)$/i, function(match) {
 	// search tell folder for any messages to give
-        var userMessages = getMessages(match[2], match[1]);
-        for(var i=0; i<userMessages.length; i++) {
-                irc.privmsg(match[2], match[1]+": "+userMessages[i]);
-        }
+	var userMessages = getMessages(match[2], match[1]);
+	var i;
+	for(i in userMessages) {
+		irc.privmsg(match[2], match[1]+", "+userMessages[i]);
+	}
 });

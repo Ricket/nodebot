@@ -10,13 +10,19 @@
 //     ~unignore user - the bot will once more respond to messages from [user]
 //     ~reload - reload scripts
 
-var admins;
-try {
-	admins = fs.readFileSync('data/admins.txt', 'ascii');
-	if(!admins) admins = "";
-	admins = admins.split('\n');
-} catch(err) {admins = [];}
+var db = require('./lib/listdb').getDB('admins');
 
+function isAdmin(username) {
+	return db.hasValue(username, true);
+}
+
+function addAdmin(username) {
+	db.add(username);
+}
+
+function removeAdmin(username) {
+	db.remove(username, true);
+}
 
 listen(/^:([^!]+).*~secret (.*)$/i, function(match) {
 	if(isAdmin(match[1])) {
@@ -47,32 +53,8 @@ listen_admin(/^:([^!]+).*~unadmin (.*)$/i, function(match) {
 	}
 });
 
-function isAdmin(username) {
-	for(var i=0; i<admins.length; i++) {
-		if(admins[i].toUpperCase() == username.toUpperCase()) return true;
-	}
-	return false;
-}
-
-function addAdmin(username) {
-	admins.push(username);
-
-	fs.writeFileSync('data/admins.txt', admins.join('\n'), 'ascii');
-}
-
-function removeAdmin(username) {
-	for(var i=0; i<admins.length; i++) {
-		if(admins[i].toUpperCase() == username.toUpperCase()) {
-			admins.splice(i,1);
-			i--;
-		}
-	}
-	
-	fs.writeFileSync('data/admins.txt', admins.join('\n'), 'ascii');
-}
-
 listen(/:([^!]+)!.*PRIVMSG (.*) :~admins/i, function(match, data, replyTo) {
-	irc.privmsg(replyTo, "Admins: "+admins.join(","));
+	irc.privmsg(replyTo, "Admins: "+db.getAll().join(","));
 });
 
 function listen_admin(regex, listener) {
