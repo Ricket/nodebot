@@ -5,6 +5,5 @@
 //     ~(date|time) - gives the current date/time
 
 listen(/PRIVMSG [^ ]+ :~(date|time)$/i, function(match, data, replyTo) {
-	var now = new Date();
-	irc.privmsg(replyTo, "Current datetime is "+now);
+	irc.privmsg(replyTo, "Current datetime is " + Date.now());
 });

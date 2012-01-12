@@ -12,26 +12,26 @@ function addMessage(room, user, message) {
 }
 
 function getMessages(room, user) {
-	var userMessages = [];
-	var prefix = room+"@"+user+": ";
-	
-	var messages = db.getAll();
-	var i;
-	for(i in messages) {
-		if(messages[i].toLowerCase().indexOf(prefix.toLowerCase()) == 0) {
+	var i, messages, prefix, userMessages;
+	userMessages = [];
+	prefix = room + "@" + user + ": ";
+
+	messages = db.getAll();
+	for (i in messages) {
+		if (messages[i].toLowerCase().indexOf(prefix.toLowerCase()) == 0) {
 			userMessages.push(messages[i].substr(prefix.length));
 		}
 	}
-	
-	for(i in userMessages) {
+
+	for (i in userMessages) {
 		db.remove(userMessages[i], true);
 	}
-	
+
 	return userMessages;
 }
 
 listen(/:([^!]+)!.*PRIVMSG ([^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
-	addMessage(match[2], match[3], "message from "+match[1]+": "+match[4]);
+	addMessage(match[2], match[3], "message from " + match[1] + ": " + match[4]);
 
 	irc.privmsg(match[2], "I'll tell them when they get back.");
 });
@@ -39,9 +39,8 @@ listen(/:([^!]+)!.*PRIVMSG ([^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
 // listen for join
 listen(/:([^!]+)!.*JOIN :(.*)$/i, function(match) {
 	// search tell folder for any messages to give
-	var userMessages = getMessages(match[2], match[1]);
-	var i;
-	for(i in userMessages) {
-		irc.privmsg(match[2], match[1]+", "+userMessages[i]);
+	var i, userMessages = getMessages(match[2], match[1]);
+	for (i in userMessages) {
+		irc.privmsg(match[2], match[1] + ", " + userMessages[i]);
 	}
 });

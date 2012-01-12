@@ -10,21 +10,23 @@ var util = require('util'),
 	listdb = require('./lib/listdb');
 
 var irc = global.nodebot = (function () {
-    var socket = new net.Socket();
+	var buffer, ignoredb, listeners, socket;
+
+	socket = new net.Socket();
     socket.setNoDelay(true);
     socket.setEncoding('ascii');
 
-    var buffer = {
+    buffer = {
         b: new Buffer(4096),
         size: 0
     };
 
-    var listeners = [];
+    listeners = [];
 
-	var ignoredb = listdb.getDB('ignore');
+	ignoredb = listdb.getDB('ignore');
 
     function send(data) {
-		if(!data || data.length == 0) {
+		if (!data || data.length == 0) {
 			console.log("ERROR tried to send no data");
 			return;
 		} else if (data.length > 510) {
@@ -37,8 +39,8 @@ var irc = global.nodebot = (function () {
     }
 
     socket.on('data', function (data) {
-        data = data.replace('\r', '');
         var newlineIdx;
+        data = data.replace('\r', '');
         while ((newlineIdx = data.indexOf('\n')) > -1) {
             if (buffer.size > 0) {
                 data = buffer.b.toString('ascii', 0, buffer.size) + data;
@@ -55,18 +57,18 @@ var irc = global.nodebot = (function () {
     });
 
     function handle(data) {
+		var dest, i, user, replyTo;
         console.log("<- " + data);
-        var user = (/^:([^!]+)!/i).exec(data);
-		var i;
+        user = (/^:([^!]+)!/i).exec(data);
         if (user) {
             user = user[1];
-			if(ignoredb.hasValue(user, true)) {
+			if (ignoredb.hasValue(user, true)) {
 				return;
 			}
         }
-        var replyTo = null;
+        replyTo = null;
         if (data.indexOf('PRIVMSG') > -1) {
-            var dest = (/^:([^!]+)!.*PRIVMSG ([^ ]+) /i).exec(data);
+            dest = (/^:([^!]+)!.*PRIVMSG ([^ ]+) /i).exec(data);
             if (dest) {
                 if (dest[2].toUpperCase() == nodebot_prefs.nickname.toUpperCase()) {
                     replyTo = dest[1];
@@ -114,22 +116,22 @@ var irc = global.nodebot = (function () {
 			send(stuff);
 		},*/
         connect: function (host, port, nickname, username, realname) {
-            var port = port || 6667;
+            port = port || 6667;
             socket.connect(port, host, function () {
                 send('NICK ' + sanitize(nickname));
                 send('USER ' + sanitize(username) + ' localhost * ' + sanitize(realname));
             });
         },
         loadScripts: function () {
+			var i, k, script, scripts;
             socket.pause();
             listeners = [];
-            var scripts = fs.readdirSync('scripts');
-			var i,j;
+            scripts = fs.readdirSync('scripts');
             if (scripts) {
                 for (i = 0; i < scripts.length; i++) {
                     if (scripts[i].substr(-3) == '.js') {
                         console.log("Loading script " + scripts[i] + "...");
-                        var script = fs.readFileSync('scripts/' + scripts[i]);
+                        script = fs.readFileSync('scripts/' + scripts[i]);
                         if (script) {
                             var scriptName = scripts[i];
                             var sandbox = {
@@ -183,13 +185,15 @@ var irc = global.nodebot = (function () {
             send("PART :" + sanitize(channel));
         },
         privmsg: function (user, message) {
-            if (!user || !message) return;
+            if (user && message) {
             // TODO split message into chunks so it doesn't exceed max length
-            send("PRIVMSG " + sanitize(user) + " :" + sanitize(message));
+            	send("PRIVMSG " + sanitize(user) + " :" + sanitize(message));
+			}
         },
         action: function (channel, action) {
-            if (!channel || !action) return;
-            send("PRIVMSG " + sanitize(channel) + " :\x01ACTION " + sanitize(action) + "\x01");
+            if (channel && action) {
+        	    send("PRIVMSG " + sanitize(channel) + " :\x01ACTION " + sanitize(action) + "\x01");
+			}
         },
 
         /* ADDITIONAL GLOBAL IRC FUNCTIONALITY */

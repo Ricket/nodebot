@@ -25,43 +25,41 @@ function removeAdmin(username) {
 }
 
 listen(/^:([^!]+).*~secret (.*)$/i, function(match) {
-	if(isAdmin(match[1])) {
+	if (isAdmin(match[1])) {
 		irc.privmsg(match[1], "You are already an admin.");
-	} else {
-		if(match[2] == nodebot_prefs.secret) {
-			addAdmin(match[1]);
-			irc.privmsg(match[1], "You are now an admin.");
-		}
+	} else if (match[2] == nodebot_prefs.secret) {
+		addAdmin(match[1]);
+		irc.privmsg(match[1], "You are now an admin.");
 	}
 });
 
 listen_admin(/^:([^!]+).*~makeadmin (.*)$/i, function(match) {
-	if(isAdmin(match[2])) {
-		irc.privmsg(match[1], match[2]+" is already an admin.");	
+	if (isAdmin(match[2])) {
+		irc.privmsg(match[1], match[2] + " is already an admin.");
 	} else {
 		addAdmin(match[2]);
-		irc.privmsg(match[1], match[2]+" is now an admin.");
+		irc.privmsg(match[1], match[2] + " is now an admin.");
 	}
 });
 
 listen_admin(/^:([^!]+).*~unadmin (.*)$/i, function(match) {
-	if(isAdmin(match[2])) {
+	if (isAdmin(match[2])) {
 		removeAdmin(match[2]);
-		irc.privmsg(match[1], match[2]+" is no longer an admin.");
+		irc.privmsg(match[1], match[2] + " is no longer an admin.");
 	} else {
-		irc.privmsg(match[1], match[2]+" isn't an admin");
+		irc.privmsg(match[1], match[2] + " isn't an admin");
 	}
 });
 
 listen(/:([^!]+)!.*PRIVMSG (.*) :~admins/i, function(match, data, replyTo) {
-	irc.privmsg(replyTo, "Admins: "+db.getAll().join(","));
+	irc.privmsg(replyTo, "Admins: " + db.getAll().join(","));
 });
 
 function listen_admin(regex, listener) {
 	listen(/^:([^!]+)/i, function(match, data, replyTo) {
-		if(isAdmin(match[1])) {
-			var match = regex.exec(data);
-			if(match) {
+		if (isAdmin(match[1])) {
+			match = regex.exec(data);
+			if (match) {
 				try {
 					listener(match, data, replyTo);
 				} catch(err) {
@@ -73,18 +71,17 @@ function listen_admin(regex, listener) {
 }
 
 listen_admin(/^:([^!]+).*~ignore (.+)$/i, function(match) {
-	if(isAdmin(match[2])) {
-		irc.privmsg(match[1], match[2]+" is an admin, can't be ignored");
-		return;
+	if (isAdmin(match[2])) {
+		irc.privmsg(match[1], match[2] + " is an admin, can't be ignored");
+	} else {
+		irc.ignore(match[2]);
+		irc.privmsg(match[1], match[2] + " is now ignored.");
 	}
-	
-	irc.ignore(match[2]);
-	irc.privmsg(match[1], match[2]+" is now ignored.");
 });
 
 listen_admin(/^:([^!]+)!.*~unignore (.*)$/i, function(match) {
 	irc.unignore(match[2]);
-	irc.privmsg(match[1], match[2]+" unignored");
+	irc.privmsg(match[1], match[2] + " unignored");
 });
 
 listen_admin(/~ignorelist$/i, function (match, data, replyTo) {
@@ -94,16 +91,10 @@ listen_admin(/~ignorelist$/i, function (match, data, replyTo) {
 var exec = require('child_process').exec;
 listen_admin(/~git pull$/i, function(match, data, replyTo) {
 	exec('git pull', function(error, stdout, stderr) {
-		var feedback;
-		if(error != null) {
-			feedback = "Error: ";
-		} else {
-			feedback = "Result: ";
-		}
+		var feedback, stdouts;
+		stdouts = stdout.replace(/\n$/, "").split("\n");
+		feedback = ((error) ? "Error: " : "Result: ") + stdouts[stdouts.length - 1];
 
-		var stdouts = stdout.replace(/\n$/,"").split("\n");
-		feedback += stdouts[stdouts.length-1];
-		
 		irc.privmsg(replyTo, feedback);
 	});
 });
