@@ -7,7 +7,7 @@
 var translate = require('translate');
 
 listen(/~translate ([^ ]+) (.*)$/i, function(match, data, replyTo) {
-	translate.text({input:'English',output:match[1]}, match[2], function(err, translation) {
+	translate.text({input: 'English', output: match[1]}, match[2], function(err, translation) {
 		irc.privmsg(replyTo, translation);
 	});
 });

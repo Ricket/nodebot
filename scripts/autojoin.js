@@ -12,9 +12,8 @@ var db = require('./lib/listdb').getDB('autojoin');
 
 listen(/376/i, function(match) {
 	// 376 is the end of MOTD
-	var channels = db.getAll();
-	var i;
-	for(i in channels) {
+	var channels = db.getAll(), i;
+	for (i in channels) {
 		irc.join(channels[i]);
 	}
 }, true /* (one time only) */);
@@ -32,7 +31,7 @@ listen(/~unautojoin (#.+)$/i, function(match, data, replyTo) {
 });
 
 listen(/~part$/i, function(match, data, replyTo) {
-	if(replyTo.indexOf('#') == 0) {
+	if (replyTo.indexOf('#') == 0) {
 		irc.part(replyTo);
 	}
 });

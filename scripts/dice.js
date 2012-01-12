@@ -6,14 +6,15 @@
 
 listen(/~(?:dice|roll)[ ]*$/i, function(match, data, replyTo) {
 	console.log('dice');
-	roll(1,6, replyTo);
+	roll(1, 6, replyTo);
 });
 
 listen(/~(?:dice|roll) (.+)$/i, function(match, data, replyTo) {
+	var params;
 	console.log('superdice');
 	try {
-		if(match[1].indexOf('d') > -1) {
-			var params = match[1].split('d');
+		if (match[1].indexOf('d') > -1) {
+			params = match[1].split('d');
 			roll(parseInt(params[0]), parseInt(params[1]), replyTo);
 			return;
 		}
@@ -24,14 +25,14 @@ listen(/~(?:dice|roll) (.+)$/i, function(match, data, replyTo) {
 });
 
 function roll(dice, faces, replyTo) {
+	var i = 0, results = [];
 	dice = Math.max(dice, 1);
 	dice = Math.min(dice, 20);
 	faces = Math.max(faces, 1);
 	faces = Math.min(faces, 10000);
-	
-	var results = [];
-	for(var i=0; i<dice; i++) {
-		results.push(""+(Math.floor(Math.random()*faces)+1));
+
+	for(; i < dice; i++) {
+		results.push("" + (Math.floor(Math.random() * faces) + 1));
 	}
 	irc.privmsg(replyTo, results.join(","));
 };

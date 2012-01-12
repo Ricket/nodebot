@@ -21,5 +21,5 @@ listen(/~reset ([0-9]+)$/i, function(match, data, replyTo) {
 });
 
 function saycount(replyTo) {
-	irc.privmsg(replyTo, "The count is now "+count);
+	irc.privmsg(replyTo, "The count is now " + count);
 }
