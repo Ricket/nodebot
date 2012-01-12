@@ -185,9 +185,15 @@ var irc = global.nodebot = (function () {
             send("PART :" + sanitize(channel));
         },
         privmsg: function (user, message) {
+			var max = 490 - user.length;
             if (user && message) {
-            // TODO split message into chunks so it doesn't exceed max length
-            	send("PRIVMSG " + sanitize(user) + " :" + sanitize(message));
+				user = sanitize(user); //avoid sanitizing these more than once
+				message = sanitize(message);
+
+				while (message) {
+					send("PRIVMSG " + sanitize(user) + " :" + sanitize(message.slice(0, max - 1)));
+					message = message.slice(max);
+				}
 			}
         },
         action: function (channel, action) {
