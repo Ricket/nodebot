@@ -186,9 +186,10 @@ var irc = global.nodebot = (function () {
         },
         privmsg: function (user, message) {
             if (user && message) {
-				var max = 490 - user.length; // 500 max; "PRIVMSG " and " :" = 10 chars
 				user = sanitize(user); //avoid sanitizing these more than once
 				message = sanitize(message);
+				
+				var max = 490 - user.length; // 500 max; "PRIVMSG " and " :" = 10 chars
 
 				while (message) {
 					send("PRIVMSG " + user + " :" + message.slice(0, max));
