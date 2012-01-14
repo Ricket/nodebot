@@ -29,10 +29,10 @@ function sayLocation(replyTo, location) {
 	tomorrow = tomorrow.toISODate();
 	try {
 		googleweather.get(function (current, forecast) {
-			if(current) {
+			if (current) {
 				irc.privmsg(replyTo, 'Currently '+current.condition+', '+current.temperature+'\xB0F, '+current.humidity+'% humidity and wind '+current.wind.direction+' at '+current.wind.speed+' mph.');
 			}
-			if(forecast) {
+			if (forecast) {
 				irc.privmsg(replyTo, 'Tomorrow, '+forecast.condition+', high '+forecast.temperature.high+'\xB0F, low '+forecast.temperature.low+'\xB0F.');
 			}
 		}, location, tomorrow);

@@ -8,10 +8,6 @@ listen(/~(coin|flip)$/i, function(match, data, replyTo) {
 	// save message into the tell folder
 	irc.action(replyTo, "flips a coin...");
 	setTimeout(function() {
-		if(Math.floor(Math.random()*2) == 1) {
-			irc.privmsg(replyTo, "Heads!");
-		} else {
-			irc.privmsg(replyTo, "Tails!");
-		}
+		irc.privmsg(replyTo, (Math.random() < 0.5) ? "Heads!" : "Tails!");
 	}, 1000);
 });

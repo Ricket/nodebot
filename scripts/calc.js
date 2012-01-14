@@ -15,10 +15,10 @@ listen(/PRIVMSG [^ ]+ :~(calc|eval|math) (.*)$/i, function(match, data, replyTo)
 		{ encoding: 'ascii',
 			timeout: 500 },
 		function (error, stdout, stderr) {
-			if(error != null) {
+			if (error != null) {
 				irc.privmsg(replyTo, stdout);
 			} else {
-				irc.privmsg(replyTo, "Result: "+stdout);
+				irc.privmsg(replyTo, "Result: " + stdout);
 			}
 		}
 	);
