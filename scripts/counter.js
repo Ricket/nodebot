@@ -9,11 +9,11 @@
 var count = 0;
 listen(/~increment$/i, function(match, data, replyTo) {
 	count++;
-	saycount();
+	saycount(replyTo);
 });
 listen(/~decrement$/i, function(match, data, replyTo) {
 	count--;
-	saycount();
+	saycount(replyTo);
 });
 listen(/~reset ([0-9]+)$/i, function(match, data, replyTo) {
 	count = parseInt(match[1]);
