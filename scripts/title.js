@@ -5,11 +5,21 @@
 //     some url - look up the url's title and announce it
 
 var http = require('http'),
+    https = require('https'),
     entities = require('./lib/entities');
 
 listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?]))/i, function(match, data, replyTo) {
 	var url = match[0];
-    var req = http.request(url, function(res) {
+    var isHttps = (url.toLowerCase().indexOf('https') == 0);
+    var handler = isHttps ? https : http;
+
+    var options = require('url').parse(url);
+    options.agent = false;
+    if(isHttps) {
+        options.rejectUnauthorized = false;
+    }
+
+    var req = handler.request(options, function(res) {
         if(res.statusCode != 200) {
             // Ignore 403 Access Forbidden; some websites block bots with this
             // code (e.g. Wikipedia).
@@ -25,7 +35,7 @@ listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]
             var data = "";
             var titleFound = false;
 
-            var hostname = require('url').parse(url).hostname;
+            var hostname = options.hostname;
 
             res.on('data', function(chunk) {
                 data += chunk;
