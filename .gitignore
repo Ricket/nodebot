@@ -1,4 +1,4 @@
 .DS_Store
 config.js
-data/*
-
+data/
+node_modules/
