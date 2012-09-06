@@ -8,39 +8,40 @@
 var db = require('./lib/listdb').getDB('messages');
 
 function addMessage(room, user, message) {
-	db.add(room+"@"+user+": "+message);
+    db.add(room+"@"+user+": "+message);
 }
 
 function getMessages(room, user) {
-	var i, messages, prefix, userMessages;
-	userMessages = [];
-	prefix = room + "@" + user + ": ";
+    var i, messages, prefix, userMessages, messagesToRemove;
+    userMessages = [], messagesToRemove = [];
+    prefix = room + "@" + user + ": ";
 
-	messages = db.getAll();
-	for (i in messages) {
-		if (messages[i].toLowerCase().indexOf(prefix.toLowerCase()) == 0) {
-			userMessages.push(messages[i].substr(prefix.length));
-		}
-	}
+    messages = db.getAll();
+    for (i in messages) {
+        if (messages[i].toLowerCase().indexOf(prefix.toLowerCase()) == 0) {
+            messagesToRemove.push(messages[i]);
+            userMessages.push(messages[i].substr(prefix.length));
+        }
+    }
 
-	for (i in userMessages) {
-		db.remove(userMessages[i], true);
-	}
+    for (i in messagesToRemove) {
+        db.remove(messagesToRemove[i], true);
+    }
 
-	return userMessages;
+    return userMessages;
 }
 
 listen(/:([^!]+)!.*PRIVMSG ([^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
-	addMessage(match[2], match[3], "message from " + match[1] + ": " + match[4]);
+    addMessage(match[2], match[3], "message from " + match[1] + ": " + match[4]);
 
-	irc.privmsg(match[2], "I'll tell them when they get back.");
+    irc.privmsg(match[2], "I'll tell them when they get back.");
 });
 
 // listen for join
 listen(/:([^!]+)!.*JOIN :?(.*)$/i, function(match) {
-	// search tell folder for any messages to give
-	var i, userMessages = getMessages(match[2], match[1]);
-	for (i in userMessages) {
-		irc.privmsg(match[2], match[1] + ", " + userMessages[i]);
-	}
+    // search tell folder for any messages to give
+    var i, userMessages = getMessages(match[2], match[1]);
+    for (i in userMessages) {
+        irc.privmsg(match[2], match[1] + ", " + userMessages[i]);
+    }
 });
