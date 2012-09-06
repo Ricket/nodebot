@@ -4,73 +4,44 @@
 // This script handles the following functions:
 //     some url - look up the url's title and announce it
 
-var http = require('http'),
-    https = require('https'),
+var request = require('request'),
     entities = require('./lib/entities');
 
 listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?]))/i, function(match, data, replyTo) {
 	var url = match[0];
-    var isHttps = (url.toLowerCase().indexOf('https') == 0);
-    var handler = isHttps ? https : http;
 
-    var options = require('url').parse(url);
-    options.agent = false;
-    if(isHttps) {
-        options.rejectUnauthorized = false;
-    }
-
-    var req = handler.request(options, function(res) {
-        if(res.statusCode != 200) {
+    request(url, function(error, response, body) {
+        if(error) {
+            irc.privmsg(replyTo, "Error looking up URL: " + error);
+        } else if(response.statusCode != 200) {
             // Ignore 403 Access Forbidden; some websites block bots with this
             // code (e.g. Wikipedia).
             if(res.statusCode != 403) {
-                irc.privmsg(replyTo, "" + res.statusCode);
+                irc.privmsg(replyTo, "" + response.statusCode);
             }
-            req.abort();
-        } else if(res.headers['content-type'] &&
-                  res.headers['content-type'].toLowerCase().indexOf("text/html") == -1) {
+        } else if(response.headers['content-type'] && response.headers['content-type'].toLowerCase().indexOf('text/html') == -1) {
             // Not an HTML page
-            req.abort();
         } else {
-            var data = "";
-            var titleFound = false;
+            var titleMatch = /<title>([^<]+)<\/title>/i.exec(body),
+                hostname = response.request.host;
 
-            var hostname = options.hostname;
+            if(titleMatch && titleMatch[1]) {
+                var title = titleMatch[1];
+                
+                // replace multi-spaces/newlines with spaces
+                title = title.replace(/\s{2,}/g," ");
+                
+                // trim front and back
+                title = title.replace(/^\s+/,"");
+                title = title.replace(/\s+$/,"");
+                
+                // decode HTML entities
+                title = entities.decode(title);
 
-            res.on('data', function(chunk) {
-                data += chunk;
-
-                var titleMatch = /<title>([^<]+)<\/title>/i.exec(data);
-                if(titleMatch && titleMatch[1]) {
-                    titleFound = true;
-
-                    var title = titleMatch[1];
-                    
-                    // replace multi-spaces/newlines with spaces
-                    title = title.replace(/\s{2,}/g," ");
-                    
-                    // trim front and back
-                    title = title.replace(/^\s+/,"");
-                    title = title.replace(/\s+$/,"");
-                    
-                    // decode HTML entities
-                    title = entities.decode(title);
-
-                    irc.privmsg(replyTo, hostname + " : " + title);
-                    res.pause();
-                    res.destroy();
-                    req.abort();
-                }
-            });
-            res.on('end', function() {
-                if(!titleFound) {
-                    irc.privmsg(replyTo, hostname + " : title not found");
-                    res.destroy();
-                }
-            });
+                irc.privmsg(replyTo, hostname + " : " + title);
+            } else {
+                irc.privmsg(replyTo, hostname + " : title not found");
+            }
         }
-    }).on('error', function(e) {
-        irc.privmsg(replyTo, "Error looking up URL: " + e.message);
     });
-    req.end();
 });
