@@ -37,7 +37,7 @@ listen(/:([^!]+)!.*PRIVMSG ([^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
 });
 
 // listen for join
-listen(/:([^!]+)!.*JOIN :(.*)$/i, function(match) {
+listen(/:([^!]+)!.*JOIN :?(.*)$/i, function(match) {
 	// search tell folder for any messages to give
 	var i, userMessages = getMessages(match[2], match[1]);
 	for (i in userMessages) {
