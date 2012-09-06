@@ -8,7 +8,7 @@ var request = require('request'),
     entities = require('./lib/entities');
 
 listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?]))/i, function(match, data, replyTo) {
-	var url = match[0];
+    var url = match[0];
 
     request(url, function(error, response, body) {
         if(error) {
