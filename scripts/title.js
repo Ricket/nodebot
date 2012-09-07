@@ -10,6 +10,10 @@ var request = require('request'),
 listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?]))/i, function(match, data, replyTo) {
     var url = match[0];
 
+    if(url.indexOf('http') != 0) {
+        url = 'https://' + url;
+    }
+
     var requestObject = {
         uri: url,
         strictSSL: false
