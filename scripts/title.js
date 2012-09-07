@@ -10,9 +10,16 @@ var request = require('request'),
 listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?]))/i, function(match, data, replyTo) {
     var url = match[0];
 
-    request(url, function(error, response, body) {
+    var requestObject = {
+        uri: url,
+        strictSSL: false
+    };
+
+    request(requestObject, function(error, response, body) {
         if(error) {
-            irc.privmsg(replyTo, "Error looking up URL: " + error);
+            if(error.indexOf('SSL routines') < 0) {
+                irc.privmsg(replyTo, "Error looking up URL: " + error);
+            }
         } else if(response.statusCode != 200) {
             // Ignore 403 Access Forbidden; some websites block bots with this
             // code (e.g. Wikipedia).
