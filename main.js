@@ -112,9 +112,10 @@ var irc = global.nodebot = (function () {
 		/* The following function would give full power to scripts;
 		 * this is probably not desirable, but can sometimes be good
 		 * for testing.
+         */
 		raw: function(stuff) {
 			send(stuff);
-		},*/
+		},
         connect: function (host, port, nickname, username, realname) {
             port = port || 6667;
             socket.connect(port, host, function () {

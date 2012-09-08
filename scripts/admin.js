@@ -33,6 +33,21 @@ listen(/^:([^!]+).*~secret (.*)$/i, function(match) {
 	}
 });
 
+function listen_admin(regex, listener) {
+	listen(/^:([^!]+)/i, function(match, data, replyTo) {
+		if (isAdmin(match[1])) {
+			match = regex.exec(data);
+			if (match) {
+				try {
+					listener(match, data, replyTo);
+				} catch(err) {
+					console.log("caught error in admin script: "+err);
+				}
+			}
+		}
+	});
+}
+
 listen_admin(/^:([^!]+).*~makeadmin (.*)$/i, function(match) {
 	if (isAdmin(match[2])) {
 		irc.privmsg(match[1], match[2] + " is already an admin.");
@@ -54,21 +69,6 @@ listen_admin(/^:([^!]+).*~unadmin (.*)$/i, function(match) {
 listen(/:([^!]+)!.*PRIVMSG (.*) :~admins/i, function(match, data, replyTo) {
 	irc.privmsg(replyTo, "Admins: " + db.getAll().join(","));
 });
-
-function listen_admin(regex, listener) {
-	listen(/^:([^!]+)/i, function(match, data, replyTo) {
-		if (isAdmin(match[1])) {
-			match = regex.exec(data);
-			if (match) {
-				try {
-					listener(match, data, replyTo);
-				} catch(err) {
-					console.log("caught error in admin script: "+err);
-				}
-			}
-		}
-	});
-}
 
 listen_admin(/^:([^!]+).*~ignore (.+)$/i, function(match) {
 	if (isAdmin(match[2])) {
@@ -102,4 +102,8 @@ listen_admin(/~git pull$/i, function(match, data, replyTo) {
 listen_admin(/~reload$/i, function(match, data, replyTo) {
 	irc.loadScripts();
 	irc.privmsg(replyTo, "Reloaded scripts");
+});
+
+listen_admin(/~raw (.*)$/i, function(match) {
+    irc.raw(match[1]);
 });
