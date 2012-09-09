@@ -7,6 +7,7 @@ var util = require('util'),
     fs = require('fs');
     vm = require('vm');
     repl = require('repl'),
+    _ = require('underscore'),
     listdb = require('./lib/listdb');
 
 var irc = global.nodebot = (function () {
@@ -77,15 +78,28 @@ var irc = global.nodebot = (function () {
                 }
             }
         }
+
+        var match, regex;
         for (i = 0; i < listeners.length; i++) {
-            match = listeners[i][0].exec(data);
+            if(_.isRegExp(listeners[i][0])) {
+                match = listeners[i][0].exec(data);
+            } else {
+                regex = 'PRIVMSG [^ ]+ :';
+                if(listeners[i][3] /* prefixed */) {
+                   regex += nodebot_prefs.command_prefix;
+                }
+                regex += listeners[i][0];
+                regex = new RegExp(regex);
+                match = regex.exec(data);
+            }
+
             if (match) {
                 try {
                     listeners[i][1](match, data, replyTo);
                 } catch (err) {
                     console.log("caught error in script " + listeners[i][3] + ": " + err);
                 }
-                if (listeners[i][2]) {
+                if (listeners[i][2] /* once */) {
                     listeners.splice(i, 1);
                     i--;
                 }
@@ -145,9 +159,12 @@ var irc = global.nodebot = (function () {
                                 fs: fs,
                                 require: require,
                                 util: util,
-                                listen: function (dataRegex, callback, once) {
-                                    once = once || false;
-                                    listeners.push([dataRegex, callback, once, scriptName]);
+                                listen: function (dataRegex, callback, once, prefixed) {
+                                    once = !!once;
+                                    if (typeof prefixed === "undefined" || prefixed === null) {
+                                        prefixed = true;
+                                    }
+                                    listeners.push([dataRegex, callback, once, prefixed, scriptName]);
                                 }
                             };
                             try {
