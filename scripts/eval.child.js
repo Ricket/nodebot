@@ -3,8 +3,10 @@
 
 // This is the helper script for calc.js
 
-var vm = require('vm');
-var stdin = process.openStdin();
+var vm = require('vm'),
+    _ = require('underscore'),
+    stdin = process.openStdin();
+
 stdin.setEncoding('ascii');
 
 var wholeCommand = "";
@@ -14,7 +16,7 @@ stdin.on('data', function (command) {
 
 stdin.on('end', function() {
     try {
-        process.stdout.write("" + vm.runInNewContext(wholeCommand));
+        process.stdout.write("" + vm.runInNewContext(wholeCommand, { _: _ }));
         process.exit(0);
     } catch(err) {
         process.stdout.write("" + err);

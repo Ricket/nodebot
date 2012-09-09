@@ -5,6 +5,7 @@ Prerequisites
 -------------
 
 - node.js: v0.4.8 was used for development and testing of this bot.
+- underscore: used by the eval.js script - `npm install underscore`
 - request and jsdom: used by the googleweather.js lib which is used by the weather.js script, can be installed with `npm install request` and `npm install jsdom`
 - request is also used by the URL title script
 - translate: used by the translate.js script, can be installed with `npm install translate`
