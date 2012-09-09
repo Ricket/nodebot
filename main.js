@@ -123,9 +123,9 @@ var irc = global.nodebot = (function () {
     }
 
     return {
-        /* The following function would give full power to scripts;
-         * this is probably not desirable, but can sometimes be good
-         * for testing.
+        /* The following function gives full power to scripts;
+         * you may want to no-op this function for security reasons, if you
+         * don't vet your scripts carefully.
          */
         raw: function(stuff) {
             send(stuff);
