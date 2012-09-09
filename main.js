@@ -144,7 +144,8 @@ var irc = global.nodebot = (function () {
             scripts = fs.readdirSync('scripts');
             if (scripts) {
                 for (i = 0; i < scripts.length; i++) {
-                    if (scripts[i].substr(-3) == '.js') {
+                    if (scripts[i].substr(-3) == '.js' &&
+                            scripts[i].substr(-9) != '.child.js') {
                         console.log("Loading script " + scripts[i] + "...");
                         script = fs.readFileSync('scripts/' + scripts[i]);
                         if (script) {
@@ -210,7 +211,8 @@ var irc = global.nodebot = (function () {
                 var privmsg = "PRIVMSG " + user + " :";
                 var max = 510 - privmsg.length;
 
-                while (message) {
+                var maxmessages = 3;
+                while (message && (maxmessages--) > 0) {
                     send(privmsg + message.slice(0, max));
                     message = message.slice(max);
                 }
