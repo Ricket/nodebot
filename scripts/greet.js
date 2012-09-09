@@ -15,10 +15,18 @@ function privmsg_throttled(replyTo, msg) {
     }
 }
 
-listen(/PRIVMSG [^ ]+ :(hello|hi|howdy|hola|hey)/i, function(match, data, replyTo) {
-    privmsg_throttled(replyTo, "Hello!");
-});
+var HELLOS = ['hello', 'hi', 'howdy', 'hola'],
+    BYES = ['goodbye', 'bye', 'cya', 'adios', 'ttyl'],
+    i;
 
-listen(/PRIVMSG [^ ]+ :(goodbye|bye|cya|adios|ttyl)/i, function(match, data, replyTo) {
-    privmsg_throttled(replyTo, "Goodbye!");
-});
+for(i in HELLOS) {
+    listen(HELLOS[i], function(match, data, replyTo) {
+        privmsg_throttled(replyTo, "Hello!");
+    }, false, false);
+}
+
+for(i in BYES) {
+    listen(BYES[i], function(match, data, replyTo) {
+        privmsg_throttled(replyTo, "Goodbye!");
+    }, false, false);
+}
