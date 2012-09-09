@@ -5,11 +5,11 @@
 //     ~eval expression - evaluates expression as javascript within an empty
 //                        sandbox
 
-var vm = require('vm');
-var exec = require('child_process').exec;
+var vm = require('vm'),
+    exec = require('child_process').exec;
 
 listen(/PRIVMSG [^ ]+ :~eval (.*)$/i, function(match, data, replyTo) {
-	var child = exec('node scripts/calc.js.child',
+	var child = exec('node scripts/eval.js.child',
 		{ encoding: 'ascii',
 			timeout: 500 },
 		function (error, stdout, stderr) {
