@@ -8,18 +8,18 @@
 
 var count = 0;
 listen(/~increment$/i, function(match, data, replyTo) {
-	count++;
-	saycount(replyTo);
+    count++;
+    saycount(replyTo);
 });
 listen(/~decrement$/i, function(match, data, replyTo) {
-	count--;
-	saycount(replyTo);
+    count--;
+    saycount(replyTo);
 });
 listen(/~reset ([0-9]+)$/i, function(match, data, replyTo) {
-	count = parseInt(match[1]);
-	saycount(replyTo);
+    count = parseInt(match[1]);
+    saycount(replyTo);
 });
 
 function saycount(replyTo) {
-	irc.privmsg(replyTo, "The count is now " + count);
+    irc.privmsg(replyTo, "The count is now " + count);
 }

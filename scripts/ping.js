@@ -11,5 +11,5 @@
 //     Responds to the PING command with a PONG command.
 
 listen(/^PING :(.+)$/i, function(match) {
-	irc.pong(match[1]);
+    irc.pong(match[1]);
 });

@@ -8,8 +8,8 @@ var Bitly = require('bitly').Bitly;
 var bitly = new Bitly(nodebot_prefs.bitly_username, nodebot_prefs.bitly_apikey);
 
 listen(/~bitly (.*)$/i, function(match, data, replyTo) {
-	bitly.shorten(match[1], function(result) {
-		console.log(util.inspect(result));
-	});
+    bitly.shorten(match[1], function(result) {
+        console.log(util.inspect(result));
+    });
 });
 */

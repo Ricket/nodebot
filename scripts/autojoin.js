@@ -11,31 +11,31 @@
 var db = require('./lib/listdb').getDB('autojoin');
 
 listen(/376/i, function(match) {
-	// 376 is the end of MOTD
-	var channels = db.getAll(), i;
-	for (i in channels) {
-		irc.join(channels[i]);
-	}
+    // 376 is the end of MOTD
+    var channels = db.getAll(), i;
+    for (i in channels) {
+        irc.join(channels[i]);
+    }
 }, true /* (one time only) */);
 
 listen(/~join (#.+)$/i, function(match, data, replyTo) {
-	irc.join(match[1]);
+    irc.join(match[1]);
 });
 
 listen(/~autojoin (#.+)$/i, function(match, data, replyTo) {
-	db.add(match[1]);
+    db.add(match[1]);
 });
 
 listen(/~unautojoin (#.+)$/i, function(match, data, replyTo) {
-	db.remove(match[1], true /* (ignore case) */);
+    db.remove(match[1], true /* (ignore case) */);
 });
 
 listen(/~part$/i, function(match, data, replyTo) {
-	if (replyTo.indexOf('#') == 0) {
-		irc.part(replyTo);
-	}
+    if (replyTo.indexOf('#') == 0) {
+        irc.part(replyTo);
+    }
 });
 
 listen(/~part (#.+)$/i, function(match, data, replyTo) {
-	irc.part(match[1]);
+    irc.part(match[1]);
 });

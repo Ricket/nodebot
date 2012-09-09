@@ -7,5 +7,5 @@
 //         <nodebot> it again
 
 listen(/PRIVMSG [^ ]+ :~?say (.+)$/i, function(match, data, replyTo) {
-	irc.privmsg(replyTo, match[1]);
+    irc.privmsg(replyTo, match[1]);
 });

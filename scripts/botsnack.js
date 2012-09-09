@@ -5,5 +5,5 @@
 //     ~botsnack - hooray!
 
 listen(/^:([^!]+)!.*PRIVMSG [^ ]+ :~botsnack$/i, function(match, data, replyTo) {
-	irc.privmsg(replyTo, "Yum!");
+    irc.privmsg(replyTo, "Yum!");
 });

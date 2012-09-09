@@ -5,7 +5,7 @@
 //     ~rps {r|p|s} - Play rock-paper-scissors.
 
 listen(/~rps (r|p|s)/i, function(match, data, replyTo) {
-	var botChoice = Math.floor(Math.random() * 3);
+    var botChoice = Math.floor(Math.random() * 3);
     var playerChoice = match[1].toLowerCase();
 
     var output = "chose ";

@@ -3,16 +3,16 @@
 // https://github.com/Ricket/nodebot
 require('./config.js');
 var util = require('util'),
-	net = require('net');
-	fs = require('fs');
-	vm = require('vm');
-	repl = require('repl'),
-	listdb = require('./lib/listdb');
+    net = require('net');
+    fs = require('fs');
+    vm = require('vm');
+    repl = require('repl'),
+    listdb = require('./lib/listdb');
 
 var irc = global.nodebot = (function () {
-	var buffer, ignoredb, listeners, socket;
+    var buffer, ignoredb, listeners, socket;
 
-	socket = new net.Socket();
+    socket = new net.Socket();
     socket.setNoDelay(true);
     socket.setEncoding('ascii');
 
@@ -23,13 +23,13 @@ var irc = global.nodebot = (function () {
 
     listeners = [];
 
-	ignoredb = listdb.getDB('ignore');
+    ignoredb = listdb.getDB('ignore');
 
     function send(data) {
-		if (!data || data.length == 0) {
-			console.log("ERROR tried to send no data");
-			return;
-		} else if (data.length > 510) {
+        if (!data || data.length == 0) {
+            console.log("ERROR tried to send no data");
+            return;
+        } else if (data.length > 510) {
             console.log("ERROR tried to send data > 510 chars in length: " + data);
             return;
         }
@@ -57,14 +57,14 @@ var irc = global.nodebot = (function () {
     });
 
     function handle(data) {
-		var dest, i, user, replyTo;
+        var dest, i, user, replyTo;
         console.log("<- " + data);
         user = (/^:([^!]+)!/i).exec(data);
         if (user) {
             user = user[1];
-			if (ignoredb.hasValue(user, true)) {
-				return;
-			}
+            if (ignoredb.hasValue(user, true)) {
+                return;
+            }
         }
         replyTo = null;
         if (data.indexOf('PRIVMSG') > -1) {
@@ -95,27 +95,27 @@ var irc = global.nodebot = (function () {
 
     function sanitize(data) {
         if (!data) {
-			return data;
-		}
-		/* Note:
-		 * 0x00 (null character) is invalid
-		 * 0x01 signals a CTCP message, which we shouldn't ever need to do
-		 * 0x02 is bold in mIRC (and thus other GUI clients)
-		 * 0x03 precedes a color code in mIRC (and thus other GUI clients)
-		 * 0x04 thru 0x19 are invalid control codes, except for:
-		 * 0x16 is "reverse" (swaps fg and bg colors) in mIRC
-		 */
+            return data;
+        }
+        /* Note:
+         * 0x00 (null character) is invalid
+         * 0x01 signals a CTCP message, which we shouldn't ever need to do
+         * 0x02 is bold in mIRC (and thus other GUI clients)
+         * 0x03 precedes a color code in mIRC (and thus other GUI clients)
+         * 0x04 thru 0x19 are invalid control codes, except for:
+         * 0x16 is "reverse" (swaps fg and bg colors) in mIRC
+         */
         return data.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[^\x02-\x03|\x16|\x20-\x7e]/g, "");
     }
 
     return {
-		/* The following function would give full power to scripts;
-		 * this is probably not desirable, but can sometimes be good
-		 * for testing.
+        /* The following function would give full power to scripts;
+         * this is probably not desirable, but can sometimes be good
+         * for testing.
          */
-		raw: function(stuff) {
-			send(stuff);
-		},
+        raw: function(stuff) {
+            send(stuff);
+        },
         connect: function (host, port, nickname, username, realname) {
             port = port || 6667;
             socket.connect(port, host, function () {
@@ -124,7 +124,7 @@ var irc = global.nodebot = (function () {
             });
         },
         loadScripts: function () {
-			var i, k, script, scripts;
+            var i, k, script, scripts;
             socket.pause();
             listeners = [];
             scripts = fs.readdirSync('scripts');
@@ -140,7 +140,7 @@ var irc = global.nodebot = (function () {
                                 nodebot_prefs: nodebot_prefs,
                                 console: console,
                                 setTimeout: setTimeout,
-								setInterval: setInterval,
+                                setInterval: setInterval,
                                 vm: vm,
                                 fs: fs,
                                 require: require,
@@ -187,30 +187,30 @@ var irc = global.nodebot = (function () {
         },
         privmsg: function (user, message) {
             if (user && message) {
-				user = sanitize(user); //avoid sanitizing these more than once
-				message = sanitize(message);
-				
-				var privmsg = "PRIVMSG " + user + " :";
-				var max = 510 - privmsg.length;
+                user = sanitize(user); //avoid sanitizing these more than once
+                message = sanitize(message);
+                
+                var privmsg = "PRIVMSG " + user + " :";
+                var max = 510 - privmsg.length;
 
-				while (message) {
-					send(privmsg + message.slice(0, max));
-					message = message.slice(max);
-				}
-			}
+                while (message) {
+                    send(privmsg + message.slice(0, max));
+                    message = message.slice(max);
+                }
+            }
         },
         action: function (channel, action) {
             if (channel && action) {
-        	    send("PRIVMSG " + sanitize(channel) + " :\x01ACTION " + sanitize(action) + "\x01");
-			}
+                send("PRIVMSG " + sanitize(channel) + " :\x01ACTION " + sanitize(action) + "\x01");
+            }
         },
 
         /* ADDITIONAL GLOBAL IRC FUNCTIONALITY */
         ignore: function (user) {
-			ignoredb.add(user);
+            ignoredb.add(user);
         },
         unignore: function (user) {
-			ignoredb.remove(user, true);
+            ignoredb.remove(user, true);
         },
         chatignorelist: function (channel) {
             irc.chatmsg(channel, "Ignore list: " + sanitize(ignoredb.getAll().join(",")));
