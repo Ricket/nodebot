@@ -9,7 +9,7 @@ var vm = require('vm'),
     exec = require('child_process').exec;
 
 listen(/PRIVMSG [^ ]+ :~eval (.*)$/i, function(match, data, replyTo) {
-	var child = exec('node scripts/eval.js.child',
+	var child = exec('node scripts/eval.child.js',
 		{ encoding: 'ascii',
 			timeout: 500 },
 		function (error, stdout, stderr) {
