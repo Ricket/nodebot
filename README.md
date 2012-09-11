@@ -32,6 +32,6 @@ For developing your own scripts, use the existing scripts as examples to make yo
 License
 -------
 
-(c) 2011 Richard Carter
+(c) 2012 Richard Carter
 
 This project is licensed under the MIT license; see LICENSE.txt for details.
