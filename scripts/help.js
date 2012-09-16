@@ -5,5 +5,6 @@
 //     ~help - says "HELP! HELP!"; in the future, should output a list of commands and allow for per-command help
 
 listen(/PRIVMSG [^ ]+ :~help$/i, function(match, data, replyTo) {
-    irc.privmsg(replyTo, "HELP! HELP!");
+    irc.privmsg(replyTo,
+        "List of scripts: https://github.com/Ricket/nodebot/tree/master/scripts (more may exist)");
 });
