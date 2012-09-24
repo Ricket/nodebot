@@ -27,7 +27,7 @@ listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]
         } else if(response.statusCode != 200) {
             // Ignore 403 Access Forbidden; some websites block bots with this
             // code (e.g. Wikipedia).
-            if(res.statusCode != 403) {
+            if(response.statusCode != 403) {
                 irc.privmsg(replyTo, "" + response.statusCode);
             }
         } else if(response.headers['content-type'] && response.headers['content-type'].toLowerCase().indexOf('text/html') == -1) {
