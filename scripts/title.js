@@ -21,7 +21,7 @@ listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]
 
     request(requestObject, function(error, response, body) {
         if(error) {
-            if(error.indexOf('SSL routines') < 0) {
+            if((""+error).indexOf('SSL routines') < 0) {
                 irc.privmsg(replyTo, "Error looking up URL: " + error);
             }
         } else if(response.statusCode != 200) {
