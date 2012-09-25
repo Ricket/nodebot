@@ -3,9 +3,9 @@
 // https://github.com/Ricket/nodebot
 require('./config.js');
 var util = require('util'),
-    net = require('net');
-    fs = require('fs');
-    vm = require('vm');
+    net = require('net'),
+    fs = require('fs'),
+    vm = require('vm'),
     repl = require('repl'),
     _ = require('underscore'),
     listdb = require('./lib/listdb');
@@ -243,4 +243,4 @@ process.on('uncaughtException', function (err) {
 
 irc.loadScripts();
 irc.connect(nodebot_prefs.server, nodebot_prefs.port, nodebot_prefs.nickname, nodebot_prefs.nickname, nodebot_prefs.realname);
-repl.start({ prompt: '> ' });
+repl.start({ prompt: '> ', ignoreUndefined: 'true' });
