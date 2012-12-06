@@ -39,6 +39,16 @@ var irc = global.nodebot = (function () {
         });
     }
 
+    socket.setTimeout(240 * 1000, function () {
+        // If the connection is closed, this will fail to send and the 'error'
+        // and 'close' events will trigger.
+        send('VERSION');
+    });
+
+    socket.on('close', function () {
+        process.exit();
+    });
+
     socket.on('data', function (data) {
         var newlineIdx;
         data = data.replace('\r', '');
@@ -243,4 +253,5 @@ process.on('uncaughtException', function (err) {
 
 irc.loadScripts();
 irc.connect(nodebot_prefs.server, nodebot_prefs.port, nodebot_prefs.nickname, nodebot_prefs.nickname, nodebot_prefs.realname);
+
 repl.start({ prompt: '> ', ignoreUndefined: true });
