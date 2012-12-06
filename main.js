@@ -252,6 +252,6 @@ process.on('uncaughtException', function (err) {
 });
 
 irc.loadScripts();
-irc.connect(nodebot_prefs.server, nodebot_prefs.port, nodebot_prefs.nickname, nodebot_prefs.nickname, nodebot_prefs.realname);
+irc.connect(nodebot_prefs.server, nodebot_prefs.port, nodebot_prefs.nickname, nodebot_prefs.username, nodebot_prefs.realname);
 
 repl.start({ prompt: '> ', ignoreUndefined: true });

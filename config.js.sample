@@ -4,6 +4,7 @@
 global.nodebot_prefs = {
     realname: 'Nodebot v0.8',
     nickname: 'nodebot1337',
+    username: 'nodebot1337',
     
     /* NickServ details, case-insensitive.
      * Note: regex characters must be escaped, as these values are placed
