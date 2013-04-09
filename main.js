@@ -98,8 +98,8 @@ var irc = global.nodebot = (function () {
                 if(listeners[i][3] /* prefixed */) {
                    regex += nodebot_prefs.command_prefix;
                 }
-                regex += listeners[i][0];
-                regex = new RegExp(regex);
+                regex += listeners[i][0] + "\\b";
+                regex = new RegExp(regex, "i");
                 match = regex.exec(data);
             }
 
