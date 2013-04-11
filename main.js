@@ -8,8 +8,7 @@ var util = require('util'),
     vm = require('vm'),
     repl = require('repl'),
     _ = require('lodash'),
-    listdb = require('./lib/listdb'),
-    regexFactory = require('./regexFactory');
+    listdb = require('./lib/listdb');
 
 var irc = global.nodebot = (function () {
     var buffer, ignoredb, listeners, socket;
@@ -137,6 +136,14 @@ var irc = global.nodebot = (function () {
         return data.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[^\x02-\x03|\x16|\x20-\x7e]/g, "");
     }
 
+    function uncacheModules() {
+        // Clear the module cache
+        var key;
+        for (key in require.cache) {
+            delete require.cache[key];
+        }
+    }
+
     return {
         /* The following function gives full power to scripts;
          * you may want to no-op this function for security reasons, if you
@@ -155,6 +162,9 @@ var irc = global.nodebot = (function () {
         loadScripts: function () {
             var i, k, script, scripts;
             socket.pause();
+
+            uncacheModules();
+
             listeners = [];
             scripts = fs.readdirSync('scripts');
             if (scripts) {
@@ -176,7 +186,7 @@ var irc = global.nodebot = (function () {
                                 require: require,
                                 util: util,
                                 _: _,
-                                regexFactory: regexFactory,
+                                regexFactory: require('./regexFactory'),
                                 listen: function (dataRegex, callback, once, prefixed) {
                                     once = !!once;
                                     if (typeof prefixed === "undefined" || prefixed === null) {
