@@ -6,9 +6,10 @@
 //                        sandbox
 
 var vm = require('vm'),
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    regexFactory = require('./regexFactory');
 
-listen(/PRIVMSG [^ ]+ :~eval (.*)$/i, function(match, data, replyTo) {
+listen(regexFactory.startsWith('eval'), function(match, data, replyTo) {
     var child = exec('node scripts/eval.child.js',
         { encoding: 'ascii',
             timeout: 500 },
