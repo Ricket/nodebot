@@ -8,7 +8,8 @@ var util = require('util'),
     vm = require('vm'),
     repl = require('repl'),
     _ = require('lodash'),
-    listdb = require('./lib/listdb');
+    listdb = require('./lib/listdb'),
+    regexFactory = require('./regexFactory');
 
 var irc = global.nodebot = (function () {
     var buffer, ignoredb, listeners, socket;
@@ -170,6 +171,7 @@ var irc = global.nodebot = (function () {
                                 fs: fs,
                                 require: require,
                                 util: util,
+                                regexFactory: regexFactory,
                                 listen: function (dataRegex, callback, once, prefixed) {
                                     once = !!once;
                                     if (typeof prefixed === "undefined" || prefixed === null) {

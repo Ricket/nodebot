@@ -6,8 +6,7 @@
 //                        sandbox
 
 var vm = require('vm'),
-    exec = require('child_process').exec,
-    regexFactory = require('./regexFactory');
+    exec = require('child_process').exec;
 
 listen(regexFactory.startsWith('eval'), function(match, data, replyTo) {
     var child = exec('node scripts/eval.child.js',
