@@ -15,7 +15,7 @@ var irc = global.nodebot = (function () {
 
     socket = new net.Socket();
     socket.setNoDelay(true);
-    socket.setEncoding('ascii');
+    socket.setEncoding('utf8');
 
     buffer = {
         b: new Buffer(4096),
@@ -34,7 +34,7 @@ var irc = global.nodebot = (function () {
             console.log("ERROR tried to send data > 510 chars in length: " + data);
             return;
         }
-        socket.write(data + '\r\n', 'ascii', function () {
+        socket.write(data + '\r\n', 'utf8', function () {
             console.log("-> " + data);
         });
     }
@@ -54,7 +54,7 @@ var irc = global.nodebot = (function () {
         data = data.replace('\r', '');
         while ((newlineIdx = data.indexOf('\n')) > -1) {
             if (buffer.size > 0) {
-                data = buffer.b.toString('ascii', 0, buffer.size) + data;
+                data = buffer.b.toString('utf8', 0, buffer.size) + data;
                 newlineIdx += buffer.size;
                 buffer.size = 0;
             }
@@ -62,7 +62,7 @@ var irc = global.nodebot = (function () {
             data = data.slice(newlineIdx + 1);
         }
         if (data.length > 0) {
-            buffer.b.write(data, buffer.size, 'ascii');
+            buffer.b.write(data, buffer.size, 'utf8');
             buffer.size += data.length;
         }
     });
@@ -133,7 +133,8 @@ var irc = global.nodebot = (function () {
          * 0x04 thru 0x19 are invalid control codes, except for:
          * 0x16 is "reverse" (swaps fg and bg colors) in mIRC
          */
-        return data.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[^\x02-\x03|\x16|\x20-\x7e]/g, "");
+        return data.replace(/\n/g, "\\n").replace(/\r/g, "\\r")
+            .replace(/[^\x02-\x03|\x16|\x20-\x7e]/g, "");
     }
 
     function uncacheModules() {
@@ -230,10 +231,12 @@ var irc = global.nodebot = (function () {
         part: function (channel) {
             send("PART :" + sanitize(channel));
         },
-        privmsg: function (user, message) {
+        privmsg: function (user, message, dontSanitizeMessage) {
             if (user && message) {
                 user = sanitize(user); //avoid sanitizing these more than once
-                message = sanitize(message);
+                if (!dontSanitizeMessage) {
+                    message = sanitize(message);
+                }
                 
                 var privmsg = "PRIVMSG " + user + " :";
                 var max = 510 - privmsg.length;
