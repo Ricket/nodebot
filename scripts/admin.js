@@ -99,11 +99,12 @@ listen_admin(/~git pull$/i, function(match, data, replyTo) {
     });
 });
 
-listen_admin(/~reload$/i, function(match, data, replyTo) {
+listen_admin(regexFactory.only('reload'), function(match, data, replyTo) {
     irc.loadScripts();
     irc.privmsg(replyTo, "Reloaded scripts");
 });
 
-listen_admin(/~raw (.*)$/i, function(match) {
+listen_admin(regexFactory.startsWith('raw'), function(match) {
     irc.raw(match[1]);
 });
+
