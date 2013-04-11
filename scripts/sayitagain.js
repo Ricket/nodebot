@@ -6,6 +6,6 @@
 //         <person> say it again
 //         <nodebot> it again
 
-listen(/PRIVMSG [^ ]+ :~?say (.+)$/i, function(match, data, replyTo) {
+listen(regexFactory.startsWith("say", "optional"), function(match, data, replyTo) {
     irc.privmsg(replyTo, match[1]);
 });
