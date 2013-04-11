@@ -20,7 +20,7 @@ function ensureArray(stringOrArray) {
 }
 
 function prefix(notPrefixed) {
-    if (notPrefixed) {
+    if (notPrefixed && notPrefixed !== "optional") {
         return "";
     }
 
@@ -28,7 +28,8 @@ function prefix(notPrefixed) {
         + escapeRegExp(nodebot_prefs.command_prefix) + " ?"
         + "|"
         + escapeRegExp(nodebot_prefs.nickname) + "[:,] "
-        + ")";
+        + ")"
+        + (notPrefixed === "optional" ? "?" : "");
 }
 
 function matchAny(strings) {
