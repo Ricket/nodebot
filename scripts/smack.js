@@ -4,13 +4,13 @@
 // This script handles the following functions:
 //     ~smack user - smacks user with a random object
 
-var smackobjects = ["smelly fish", "tin pot", "frying pan", "mouse",
+var smackThings = ["smelly fish", "tin pot", "frying pan", "mouse",
             "keyboard", "fly swatter", "old boot"],
     pronouns = ["me", "you", "himself", "herself", "itself", "yourself",
             "self", nodebot_prefs.nickname];
 
 function randomThing() {
-    return smackobjects[Math.floor(Math.random()*smackobjects.length)];
+    return smackThings[Math.floor(Math.random()*smackThings.length)];
 }
 
 function isPronoun(str) {
