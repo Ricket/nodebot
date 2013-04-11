@@ -4,10 +4,19 @@
  */
 
 require("./config.js");
+var _ = require("lodash");
 
 // http://stackoverflow.com/a/6969486
 function escapeRegExp(str) {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
+function ensureArray(stringOrArray) {
+    if (typeof stringOrArray === "string") {
+        return [stringOrArray];
+    } else {
+        return stringOrArray;
+    }
 }
 
 function prefix(notPrefixed) {
@@ -22,11 +31,19 @@ function prefix(notPrefixed) {
         + ")";
 }
 
-exports.only = function (keyword, notPrefixed) {
-    return new RegExp("PRIVMSG [^ ]+ :" + prefix(notPrefixed) + escapeRegExp(keyword) + "$", "i");
+function matchAny(strings) {
+    return "(?:"
+        + _.map(strings, function (s) { return escapeRegExp(s); }).join("|")
+        + ")";
+}
+
+exports.only = function (keywords, notPrefixed) {
+    keywords = ensureArray(keywords);
+    return new RegExp("PRIVMSG [^ ]+ :" + prefix(notPrefixed) + matchAny(keywords) + "$", "i");
 };
 
-exports.startsWith = function (keyword, notPrefixed) {
-    return new RegExp("PRIVMSG [^ ]+ :" + prefix(notPrefixed) + escapeRegExp(keyword) + "\\b(.*)$", "i");
+exports.startsWith = function (keywords, notPrefixed) {
+    keywords = ensureArray(keywords);
+    return new RegExp("PRIVMSG [^ ]+ :" + prefix(notPrefixed) + matchAny(keywords) + "\\b ?(.*)$", "i");
 };
 
