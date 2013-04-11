@@ -12,10 +12,12 @@ var db = require('./lib/listdb').getDB('autojoin');
 
 listen(/376/i, function(match) {
     // 376 is the end of MOTD
-    var channels = db.getAll(), i;
-    for (i in channels) {
-        irc.join(channels[i]);
-    }
+    setTimeout(function () {
+        var channels = db.getAll(), i;
+        for (i in channels) {
+            irc.join(channels[i]);
+        }
+    }, 5000); // wait 5 seconds for a cloak to apply
 }, true /* (one time only) */);
 
 listen(/~join (#.+)$/i, function(match, data, replyTo) {
