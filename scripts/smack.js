@@ -4,18 +4,32 @@
 // This script handles the following functions:
 //     ~smack user - smacks user with a random object
 
-var smackobjects = ["smelly fish", "tin pot", "frying pan", "mouse", "keyboard", "fly swatter", "old boot"];
+var smackobjects = ["smelly fish", "tin pot", "frying pan", "mouse",
+            "keyboard", "fly swatter", "old boot"],
+    pronouns = ["me", "you", "himself", "herself", "itself", "yourself",
+            "self", nodebot_prefs.nickname];
 
-listen(/^:([^!]+)!.*PRIVMSG [^ ]+ :~smack (.*)$/i, function(match, data, replyTo) {
-    var smackidx = Math.floor(Math.random()*smackobjects.length);
-    if (match[2].toUpperCase() == "ME" || match[2].toUpperCase() == "YOU" ||
-            match[2].toUpperCase() == "HIMSELF" ||
-            match[2].toUpperCase() == "HERSELF" ||
-            match[2].toUpperCase() == "ITSELF" ||
-            match[2].toUpperCase() == "SELF" ||
-            match[2].toUpperCase() == nodebot_prefs.nickname.toUpperCase()) {
-        irc.action(replyTo, "smacks "+match[1]+" with a "+smackobjects[smackidx]+".");
+function randomThing() {
+    return smackobjects[Math.floor(Math.random()*smackobjects.length)];
+}
+
+function isPronoun(str) {
+    return _.any(pronouns, function (pronoun) {
+        return str.toUpperCase() === pronoun.toUpperCase();
+    });
+}
+
+function smack(recipient, replyTo) {
+    irc.action(replyTo, "smacks " + recipient + " with a " + randomThing() + ".");
+}
+
+listen(regexFactory.startsWith("smack"), function(match, data, replyTo, from) {
+    var target = match[1].trim();
+
+    if (isPronoun(target)) {
+        smack(from, replyTo);
     } else {
-        irc.action(replyTo, "smacks "+match[2]+" with a "+smackobjects[smackidx]+".");
+        smack(target, replyTo);
     }
 });
+
