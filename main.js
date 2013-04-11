@@ -7,7 +7,7 @@ var util = require('util'),
     fs = require('fs'),
     vm = require('vm'),
     repl = require('repl'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     listdb = require('./lib/listdb');
 
 var irc = global.nodebot = (function () {

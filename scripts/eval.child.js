@@ -4,7 +4,7 @@
 // This is the helper script for calc.js
 
 var vm = require('vm'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     stdin = process.openStdin();
 
 stdin.setEncoding('ascii');
