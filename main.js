@@ -69,7 +69,7 @@ var irc = global.nodebot = (function () {
     });
 
     function handle(data) {
-        var dest, i, user, replyTo;
+        var dest, i, user, replyTo, from;
         console.log("<- " + data);
         user = (/^:([^!]+)!/i).exec(data);
         if (user) {
@@ -79,13 +79,15 @@ var irc = global.nodebot = (function () {
             }
         }
         replyTo = null;
+        from = null;
         if (data.indexOf('PRIVMSG') > -1) {
             dest = (/^:([^!]+)!.*PRIVMSG ([^ ]+) /i).exec(data);
             if (dest) {
                 if (dest[2].toUpperCase() == nodebot_prefs.nickname.toUpperCase()) {
-                    replyTo = dest[1];
+                    replyTo = from = dest[1];
                 } else {
                     replyTo = dest[2];
+                    from = dest[1];
                 }
             }
         }
@@ -106,7 +108,9 @@ var irc = global.nodebot = (function () {
 
             if (match) {
                 try {
-                    listeners[i][1](match, data, replyTo);
+                    // TODO move data to the end since it is least commonly needed
+                    // and replyTo to the front, since it is always needed
+                    listeners[i][1](match, data, replyTo, from);
                 } catch (err) {
                     console.log("caught error in script " + listeners[i][3] + ": " + err);
                 }
@@ -171,6 +175,7 @@ var irc = global.nodebot = (function () {
                                 fs: fs,
                                 require: require,
                                 util: util,
+                                _: _,
                                 regexFactory: regexFactory,
                                 listen: function (dataRegex, callback, once, prefixed) {
                                     once = !!once;
