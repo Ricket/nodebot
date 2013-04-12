@@ -4,6 +4,6 @@
 // This script handles the following functions:
 //     ~botsnack - hooray!
 
-listen(/^:([^!]+)!.*PRIVMSG [^ ]+ :~botsnack$/i, function(match, data, replyTo) {
+listen(regexFactory.only("botsnack"), function(match, data, replyTo) {
     irc.privmsg(replyTo, "Yum!");
 });
