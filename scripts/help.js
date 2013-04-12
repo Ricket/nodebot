@@ -2,9 +2,9 @@
 // This code is licensed under the MIT license; see LICENSE.txt for details.
 
 // This script handles the following functions:
-//     ~help - says "HELP! HELP!"; in the future, should output a list of commands and allow for per-command help
+//     ~help - output a list of commands
 
-listen(/PRIVMSG [^ ]+ :~help$/i, function(match, data, replyTo) {
+listen(regexFactory.only("help"), function(match, data, replyTo) {
     irc.privmsg(replyTo,
         "List of scripts: https://github.com/Ricket/nodebot/tree/master/scripts (more may exist)");
 });
