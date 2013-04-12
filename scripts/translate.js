@@ -6,9 +6,15 @@
 
 var translate = require('translate');
 
-listen(/~translate ([^ ]+) (.*)$/i, function(match, data, replyTo) {
-    translate.text({input: 'English', output: match[1]}, match[2], function(err, translation) {
-        irc.privmsg(replyTo, translation);
-    });
+listen(regexFactory.startsWith("translate"), function(match, data, replyTo) {
+    var msgMatch = /^([^ ]+) (.*)$/.exec(match[1]);
+
+    if (msgMatch) {
+        translate.text({input: 'English', output: match[1]}, match[2], function(err, translation) {
+            irc.privmsg(replyTo, translation);
+        });
+    } else {
+        irc.privmsg(replyTo, "Usage: translate {language} {word or phrase}");
+    }
 });
 
