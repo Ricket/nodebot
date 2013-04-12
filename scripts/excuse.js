@@ -8,7 +8,7 @@
 
 var EXCUSES;
 
-listen("excuse", function(match, data, replyTo) {
+listen(regexFactory.only("excuse"), function(match, data, replyTo) {
     var excuse = EXCUSES[Math.floor(Math.random() * EXCUSES.length)];
     irc.privmsg(replyTo, excuse);
 });
