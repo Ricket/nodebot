@@ -24,72 +24,65 @@ function removeAdmin(username) {
     db.remove(username, true);
 }
 
-listen(/^:([^!]+).*~secret (.*)$/i, function(match) {
-    if (isAdmin(match[1])) {
-        irc.privmsg(match[1], "You are already an admin.");
-    } else if (match[2] == nodebot_prefs.secret) {
-        addAdmin(match[1]);
-        irc.privmsg(match[1], "You are now an admin.");
+listen(regexFactory.startsWith("secret"), function(match, data, replyTo, from) {
+    if (isAdmin(from)) {
+        irc.privmsg(replyTo, "You are already an admin.");
+    } else if (match[1] === nodebot_prefs.secret) {
+        addAdmin(from);
+        irc.privmsg(replyTo, "You are now an admin.");
     }
 });
 
+listen(regexFactory.only("admins"), function(match, data, replyTo) {
+    irc.privmsg(replyTo, "Admins: " + db.getAll().join(","));
+});
+
 function listen_admin(regex, listener) {
-    listen(/^:([^!]+)/i, function(match, data, replyTo) {
-        if (isAdmin(match[1])) {
-            match = regex.exec(data);
-            if (match) {
-                try {
-                    listener(match, data, replyTo);
-                } catch(err) {
-                    console.log("caught error in admin script: "+err);
-                }
-            }
+    listen(regex, function(match, data, replyTo, from) {
+        if (isAdmin(from)) {
+            listener(match, data, replyTo, from);
         }
     });
 }
 
-listen_admin(/^:([^!]+).*~makeadmin (.*)$/i, function(match) {
-    if (isAdmin(match[2])) {
-        irc.privmsg(match[1], match[2] + " is already an admin.");
+listen_admin(regexFactory.startsWith("makeadmin"), function(match, data, replyTo, from) {
+    if (isAdmin(match[1])) {
+        irc.privmsg(replyTo, match[1] + " is already an admin.");
     } else {
-        addAdmin(match[2]);
-        irc.privmsg(match[1], match[2] + " is now an admin.");
+        addAdmin(match[1]);
+        irc.privmsg(replyTo, match[1] + " is now an admin.");
     }
 });
 
-listen_admin(/^:([^!]+).*~unadmin (.*)$/i, function(match) {
-    if (isAdmin(match[2])) {
-        removeAdmin(match[2]);
-        irc.privmsg(match[1], match[2] + " is no longer an admin.");
+listen_admin(regexFactory.startsWith("unadmin"), function(match, data, replyTo, from) {
+    if (isAdmin(match[1])) {
+        removeAdmin(match[1]);
+        irc.privmsg(replyTo, match[1] + " is no longer an admin.");
     } else {
-        irc.privmsg(match[1], match[2] + " isn't an admin");
+        irc.privmsg(replyTo, match[1] + " isn't an admin");
     }
 });
 
-listen(/:([^!]+)!.*PRIVMSG (.*) :~admins/i, function(match, data, replyTo) {
-    irc.privmsg(replyTo, "Admins: " + db.getAll().join(","));
-});
-
-listen_admin(/^:([^!]+).*~ignore (.+)$/i, function(match) {
-    if (isAdmin(match[2])) {
-        irc.privmsg(match[1], match[2] + " is an admin, can't be ignored");
+listen_admin(regexFactory.startsWith("ignore"), function(match, data, replyTo, from) {
+    if (isAdmin(match[1])) {
+        irc.privmsg(replyTo, match[1] + " is an admin, can't be ignored");
     } else {
-        irc.ignore(match[2]);
-        irc.privmsg(match[1], match[2] + " is now ignored.");
+        irc.ignore(match[1]);
+        irc.privmsg(replyTo, match[1] + " is now ignored.");
     }
 });
 
-listen_admin(/^:([^!]+)!.*~unignore (.*)$/i, function(match) {
-    irc.unignore(match[2]);
-    irc.privmsg(match[1], match[2] + " unignored");
+listen_admin(regexFactory.startsWith("unignore"), function(match, data, replyTo, from) {
+    irc.unignore(match[1]);
+    irc.privmsg(replyTo, match[1] + " unignored");
 });
 
-listen_admin(/~ignorelist$/i, function (match, data, replyTo) {
+listen_admin(regexFactory.only("ignorelist"), function (match, data, replyTo) {
     irc.chatignorelist(replyTo);
 });
 
 var exec = require('child_process').exec;
-listen_admin(/~git pull$/i, function(match, data, replyTo) {
+listen_admin(regexFactory.only("git pull"), function(match, data, replyTo) {
     exec('git pull', function(error, stdout, stderr) {
         var feedback, stdouts;
         stdouts = stdout.replace(/\n$/, "").split("\n");
