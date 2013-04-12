@@ -31,10 +31,20 @@ function getMessages(room, user) {
     return userMessages;
 }
 
-listen(/:([^!]+)!.*PRIVMSG ([^ ]+) :~tell ([^ ]+) (.+)$/i, function(match) {
-    addMessage(match[2], match[3], "message from " + match[1] + ": " + match[4]);
+function isUser(str) {
+    return str[0] !== "#";
+}
 
-    irc.privmsg(match[2], "I'll tell them when they get back.");
+listen(regexFactory.startsWith("tell"), function(match, data, replyTo, from) {
+    var msgMatch = /^([^ ]+) (.+)$/.exec(match[1]);
+
+    if (msgMatch && isUser(msgMatch[1])) {
+        addMessage(replyTo, msgMatch[1], "message from " + from + ": " + msgMatch[2]);
+
+        irc.privmsg(replyTo, "I'll tell them when they get back.");
+    } else {
+        irc.privmsg(replyTo, "Usage: tell {user} {some message}");
+    }
 });
 
 // listen for join
