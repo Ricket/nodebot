@@ -16,17 +16,13 @@ function privmsg_throttled(replyTo, msg) {
 }
 
 var HELLOS = ['hello', 'hi', 'howdy', 'hola'],
-    BYES = ['goodbye', 'bye', 'cya', 'adios', 'ttyl'],
-    i;
+    BYES = ['goodbye', 'bye', 'cya', 'adios', 'ttyl'];
 
-for(i in HELLOS) {
-    listen(HELLOS[i], function(match, data, replyTo) {
-        privmsg_throttled(replyTo, "Hello!");
-    }, false, false);
-}
+listen(regexFactory.startsWith(HELLOS, "optional"), function(match, data, replyTo) {
+    privmsg_throttled(replyTo, "Hello!");
+});
 
-for(i in BYES) {
-    listen(BYES[i], function(match, data, replyTo) {
-        privmsg_throttled(replyTo, "Goodbye!");
-    }, false, false);
-}
+listen(regexFactory.startsWith(BYES, "optional"), function(match, data, replyTo) {
+    privmsg_throttled(replyTo, "Goodbye!");
+});
+
