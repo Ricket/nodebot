@@ -16,11 +16,8 @@ Date.prototype.toISODate = function () {
 
 var googleweather = require('./lib/googleweather.js');
 
-listen(/PRIVMSG [^ ]+ :~weather$/i, function(match, data, replyTo) {
-    sayLocation(replyTo, nodebot_prefs.default_location);
-});
-listen(/PRIVMSG [^ ]+ :~weather (.*)$/i, function(match, data, replyTo) {
-    sayLocation(replyTo, match[1]);
+listen(regexFactory.startsWith("weather"), function(match, data, replyTo) {
+    sayLocation(replyTo, match[1] || nodebot_prefs.default_location);
 });
 
 function sayLocation(replyTo, location) {
