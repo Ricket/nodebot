@@ -11,3 +11,4 @@ listen(/~translate ([^ ]+) (.*)$/i, function(match, data, replyTo) {
         irc.privmsg(replyTo, translation);
     });
 });
+
