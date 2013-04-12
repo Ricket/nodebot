@@ -45,3 +45,4 @@ listen(/:([^!]+)!.*JOIN :?(.*)$/i, function(match) {
         irc.privmsg(match[2], match[1] + ", " + userMessages[i]);
     }
 });
+
