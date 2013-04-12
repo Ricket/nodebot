@@ -10,7 +10,7 @@
 
 var db = require('./lib/listdb').getDB('autojoin');
 
-listen(/376/i, function(match) {
+listen(/376/i, function() {
     // 376 is the end of MOTD
     setTimeout(function () {
         var channels = db.getAll(), i;
@@ -20,24 +20,35 @@ listen(/376/i, function(match) {
     }, 5000); // wait 5 seconds for a cloak to apply
 }, true /* (one time only) */);
 
-listen(/~join (#.+)$/i, function(match, data, replyTo) {
-    irc.join(match[1]);
+function isChannelName(str) {
+    return str[0] === "#";
+}
+
+listen(regexFactory.startsWith("join"), function(match, data, replyTo) {
+    if (isChannelName(match[1])) {
+        irc.join(match[1]);
+    }
 });
 
-listen(/~autojoin (#.+)$/i, function(match, data, replyTo) {
-    db.add(match[1]);
+listen(regexFactory.startsWith("autojoin"), function(match, data, replyTo) {
+    if (isChannelName(match[1])) {
+        db.add(match[1]);
+        irc.privmsg(replyTo, "Added " + match[1] + " to autojoin list");
+    }
 });
 
-listen(/~unautojoin (#.+)$/i, function(match, data, replyTo) {
-    db.remove(match[1], true /* (ignore case) */);
+listen(regexFactory.startsWith("unautojoin"), function(match, data, replyTo) {
+    if (isChannelName(match[1])) {
+        db.remove(match[1], true /* (ignore case) */);
+        irc.privmsg(replyTo, "Removed " + match[1] + " from autojoin list");
+    }
 });
 
-listen(/~part$/i, function(match, data, replyTo) {
-    if (replyTo.indexOf('#') == 0) {
+listen(regexFactory.startsWith("part"), function(match, data, replyTo) {
+    if (isChannelName(match[1])) {
+        irc.part(match[1]);
+    } else if (match[1].length === 0 && isChannelName(replyTo)) {
         irc.part(replyTo);
     }
 });
 
-listen(/~part (#.+)$/i, function(match, data, replyTo) {
-    irc.part(match[1]);
-});
