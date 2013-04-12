@@ -23,14 +23,3 @@ listen(regexFactory.startsWith('eval'), function(match, data, replyTo) {
     child.stdin.end(match[1]);
 });
 
-/* this feature ended up being annoying
-listen(/PRIVMSG [^ ]+ :(?!~(calc|eval|math)).*?([()\d]+(?:[()+\-*\/][0-9]+[()]*)+)/i, function(match, data, replyTo) {
-    try {
-        var result = vm.runInNewContext(match[2]);
-        var numeric = parseFloat(result);
-        irc.privmsg(replyTo, match[2]+" = "+numeric);
-    } catch(err) {
-        console.log(err);
-    }
-});
-*/
