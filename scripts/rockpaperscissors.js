@@ -13,7 +13,7 @@ listen(regexFactory.startsWith("rps"), function(match, data, replyTo) {
     var playerChoice = match[1].toLowerCase();
 
     if (!isValidRPS(match[1])) {
-        irc.privmsg(replyTo, "Usage: ~rps (r|p|s)");
+        irc.privmsg(replyTo, "Usage: rps (r|p|s)");
         return;
     }
 

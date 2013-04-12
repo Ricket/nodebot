@@ -5,7 +5,7 @@
 //     ~dice|roll [XdY] - rolls a Y-sided die X times, defaults to 1d6; says the result
 
 function printHelp(replyTo) {
-    irc.privmsg(replyTo, "Usage: ~dice [XdY] - where X is number of dice (up "+
+    irc.privmsg(replyTo, "Usage: dice [XdY] - where X is number of dice (up "+
             "to 20) and Y is sides per die (up to 10000)");
 }
 
