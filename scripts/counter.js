@@ -3,23 +3,28 @@
 
 // This script handles the following functions:
 //     Holds onto a number which starts at 0 when the bot loads the script
-//     ~increment - increments the number
-//     ~decrement - decrements the number
+//     ~increment   - increments the number
+//     ~decrement   - decrements the number
+//     ~reset [num] - resets count to num or 0
 
 var count = 0;
-listen(/~increment$/i, function(match, data, replyTo) {
-    count++;
-    saycount(replyTo);
-});
-listen(/~decrement$/i, function(match, data, replyTo) {
-    count--;
-    saycount(replyTo);
-});
-listen(/~reset ([0-9]+)$/i, function(match, data, replyTo) {
-    count = parseInt(match[1]);
-    saycount(replyTo);
-});
 
-function saycount(replyTo) {
+function announceCount(replyTo) {
     irc.privmsg(replyTo, "The count is now " + count);
 }
+
+listen(regexFactory.only("increment"), function(match, data, replyTo) {
+    count++;
+    announceCount(replyTo);
+});
+
+listen(regexFactory.only("decrement"), function(match, data, replyTo) {
+    count--;
+    announceCount(replyTo);
+});
+
+listen(regexFactory.startsWith("reset"), function(match, data, replyTo) {
+    count = parseInt(match[1]) || 0;
+    announceCount(replyTo);
+});
+
