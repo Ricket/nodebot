@@ -4,9 +4,18 @@
 // This script handles the following functions:
 //     ~rps {r|p|s} - Play rock-paper-scissors.
 
-listen(/~rps (r|p|s)/i, function(match, data, replyTo) {
+function isValidRPS(choice) {
+    return choice.length === 1 && "rps".indexOf(choice) !== -1;
+}
+
+listen(regexFactory.startsWith("rps"), function(match, data, replyTo) {
     var botChoice = Math.floor(Math.random() * 3);
     var playerChoice = match[1].toLowerCase();
+
+    if (!isValidRPS(match[1])) {
+        irc.privmsg(replyTo, "Usage: ~rps (r|p|s)");
+        return;
+    }
 
     var output = "chose ";
     if(botChoice == 0) {
@@ -35,3 +44,4 @@ listen(/~rps (r|p|s)/i, function(match, data, replyTo) {
 
     irc.action(replyTo, output);
 });
+
