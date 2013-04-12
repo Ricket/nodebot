@@ -5,6 +5,6 @@
 //     ~(date|time) - gives the current date/time
 
 listen(regexFactory.only(["date", "time"]), function(match, data, replyTo) {
-    irc.privmsg(replyTo, "Current datetime is " + Date.now());
+    irc.privmsg(replyTo, "Current datetime is " + (new Date()).toString());
 });
 
