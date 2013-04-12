@@ -4,6 +4,7 @@
 // This script handles the following functions:
 //     ~(date|time) - gives the current date/time
 
-listen(/PRIVMSG [^ ]+ :~(date|time)$/i, function(match, data, replyTo) {
+listen(regexFactory.only(["date", "time"]), function(match, data, replyTo) {
     irc.privmsg(replyTo, "Current datetime is " + Date.now());
 });
+
