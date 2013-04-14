@@ -19,17 +19,17 @@ function ensureArray(stringOrArray) {
     }
 }
 
-function prefix(notPrefixed) {
-    if (notPrefixed && notPrefixed !== "optional") {
+function makePrefix(prefixed) {
+    if (prefixed === false) {
         return "";
+    } else {
+        return "(?:"
+            + escapeRegExp(nodebot_prefs.command_prefix) + " ?"
+            + "|"
+            + escapeRegExp(nodebot_prefs.nickname) + "[:,]? "
+            + ")"
+            + (prefixed === "optional" ? "?" : "");
     }
-
-    return "(?:"
-        + escapeRegExp(nodebot_prefs.command_prefix) + " ?"
-        + "|"
-        + escapeRegExp(nodebot_prefs.nickname) + "[:,]? "
-        + ")"
-        + (notPrefixed === "optional" ? "?" : "");
 }
 
 function matchAny(strings) {
@@ -38,13 +38,16 @@ function matchAny(strings) {
         + ")";
 }
 
-exports.only = function (keywords, notPrefixed) {
+exports.only = function (keywords, prefixed) {
     keywords = ensureArray(keywords);
-    return new RegExp("PRIVMSG [^ ]+ :" + prefix(notPrefixed) + matchAny(keywords) + "$", "i");
+
+    return new RegExp(
+        "PRIVMSG [^ ]+ :" + makePrefix(prefixed) + matchAny(keywords) + "$", "i");
 };
 
-exports.startsWith = function (keywords, notPrefixed) {
+exports.startsWith = function (keywords, prefixed) {
     keywords = ensureArray(keywords);
-    return new RegExp("PRIVMSG [^ ]+ :" + prefix(notPrefixed) + matchAny(keywords) + "\\b ?(.*)$", "i");
+    return new RegExp(
+        "PRIVMSG [^ ]+ :" + makePrefix(prefixed) + matchAny(keywords) + "\\b ?(.*)$", "i");
 };
 
