@@ -1,14 +1,14 @@
 var OBJECTS = ["pants", "house", "cat", "mouse"],
     object_on_fire = null;
 
-listen(/^:([^!]+)!.*PRIVMSG [^ ]+ :~fire$/i, function(match, data, replyTo) {
+listen(regexFactory.only("fire"), function(match, data, replyTo) {
     if (!object_on_fire) {
         object_on_fire = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
     }
     irc.action(replyTo, "HELP!!! My " + object_on_fire + " is on fire!!! Please ~douse it!");
 });
 
-listen(/^:([^!]+)!.*PRIVMSG [^ ]+ :~douse$/i, function(match, data, replyTo) {
+listen(regexFactory.only("douse"), function(match, data, replyTo) {
     if (object_on_fire) {
         irc.action(replyTo, "Thank you for saving my " + object_on_fire + "!");
         object_on_fire = null;
