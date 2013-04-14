@@ -93,17 +93,7 @@ var irc = global.nodebot = (function () {
 
         var match, regex;
         for (i = 0; i < listeners.length; i++) {
-            if(_.isRegExp(listeners[i][0])) {
-                match = listeners[i][0].exec(data);
-            } else {
-                regex = 'PRIVMSG [^ ]+ :';
-                if(listeners[i][3] /* prefixed */) {
-                   regex += nodebot_prefs.command_prefix;
-                }
-                regex += listeners[i][0] + "\\b";
-                regex = new RegExp(regex, "i");
-                match = regex.exec(data);
-            }
+            match = listeners[i][0].exec(data);
 
             if (match) {
                 try {
@@ -111,7 +101,7 @@ var irc = global.nodebot = (function () {
                     // and replyTo to the front, since it is always needed
                     listeners[i][1](match, data, replyTo, from);
                 } catch (err) {
-                    console.log("caught error in script " + listeners[i][3] + ": " + err);
+                    console.log("Caught error in script " + listeners[i][3] + ": " + err);
                 }
                 if (listeners[i][2] /* once */) {
                     listeners.splice(i, 1);
@@ -189,6 +179,10 @@ var irc = global.nodebot = (function () {
                                 _: _,
                                 regexFactory: require('./regexFactory'),
                                 listen: function (dataRegex, callback, once, prefixed) {
+                                    if (!_.isRegExp(dataRegex)) {
+                                        console.err("Error in script " + scripts[i] + ": first parameter to listen is not a RegExp object. Use regexFactory.");
+                                        return;
+                                    }
                                     once = !!once;
                                     if (typeof prefixed === "undefined" || prefixed === null) {
                                         prefixed = true;
