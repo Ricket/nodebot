@@ -225,10 +225,10 @@ var irc = global.nodebot = (function () {
         part: function (channel) {
             send("PART :" + sanitize(channel));
         },
-        privmsg: function (user, message, sanitize) {
+        privmsg: function (user, message, sanitizeMessage) {
             if (user && message) {
                 user = sanitize(user); //avoid sanitizing these more than once
-                if (sanitize !== false) {
+                if (sanitizeMessage !== false) {
                     message = sanitize(message);
                 }
                 
