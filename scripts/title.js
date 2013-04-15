@@ -53,7 +53,7 @@ listen(/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]
                 // decode HTML entities
                 title = entities.decode(title);
 
-                irc.privmsg(replyTo, hostname + " : " + title);
+                irc.privmsg(replyTo, hostname + " : " + title, false);
             } else {
                 irc.privmsg(replyTo, hostname + " : title not found");
             }
