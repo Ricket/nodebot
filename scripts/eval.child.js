@@ -1,20 +1,20 @@
 // (c) 2011 Richard Carter
 // This code is licensed under the MIT license; see LICENSE.txt for details.
 
-// This is the helper script for calc.js
+// This is the helper script for eval.js
 
 var vm = require('vm'),
-    _ = require('lodash'),
-    stdin = process.openStdin();
+    _ = require('lodash');
 
-stdin.setEncoding('ascii');
+process.stdin.setEncoding('utf8');
+process.stdin.resume();
 
 var wholeCommand = "";
-stdin.on('data', function (command) {
+process.stdin.on('data', function (command) {
     wholeCommand += command;
 });
 
-stdin.on('end', function() {
+process.stdin.on('end', function() {
     try {
         process.stdout.write("" + vm.runInNewContext(wholeCommand, { _: _ }));
         process.exit(0);
