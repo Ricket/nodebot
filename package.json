@@ -1,0 +1,22 @@
+{
+	"name": "nodebot",
+	"private": true,
+	"version": "0.2.0",
+	"author": "Richard Carter <richard@richardcarter.org>",
+	"description": "IRC bot written in node.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Ricket/nodebot.git"
+	},
+	"keywords": [
+		"irc",
+        "bot"
+	],
+	"dependencies": {
+		"lodash": "~1.2.0",
+        "request": "~2.20.0"
+	},
+	"engines": {
+		"node": "~0.10.4"
+	}
+}
