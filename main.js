@@ -28,15 +28,14 @@ var irc = global.nodebot = (function () {
 
     function send(data) {
         if (!data || data.length == 0) {
-            console.log("ERROR tried to send no data");
-            return;
+            console.error("ERROR tried to send no data");
         } else if (data.length > 510) {
-            console.log("ERROR tried to send data > 510 chars in length: " + data);
-            return;
+            console.error("ERROR tried to send data > 510 chars in length: " + data);
+        } else {
+            socket.write(data + '\r\n', 'utf8', function () {
+                console.log("-> " + data);
+            });
         }
-        socket.write(data + '\r\n', 'utf8', function () {
-            console.log("-> " + data);
-        });
     }
 
     socket.setTimeout(240 * 1000, function () {
@@ -115,6 +114,7 @@ var irc = global.nodebot = (function () {
         if (!data) {
             return data;
         }
+
         /* Note:
          * 0x00 (null character) is invalid
          * 0x01 signals a CTCP message, which we shouldn't ever need to do
@@ -142,6 +142,9 @@ var irc = global.nodebot = (function () {
          */
         raw: function(stuff) {
             send(stuff);
+        },
+        sanitize: function (data) {
+            return sanitize(data);
         },
         connect: function (host, port, nickname, username, realname) {
             port = port || 6667;
@@ -177,6 +180,7 @@ var irc = global.nodebot = (function () {
                                 require: require,
                                 util: util,
                                 _: _,
+                                Buffer: Buffer,
                                 regexFactory: require('./regexFactory'),
                                 listen: function (dataRegex, callback, once, prefixed) {
                                     if (!_.isRegExp(dataRegex)) {
