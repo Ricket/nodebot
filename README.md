@@ -4,9 +4,9 @@ Nodebot - a [node.js](http://www.nodejs.org/) IRC bot
 Prerequisites
 -------------
 
-- node.js: v0.4.8 was used for development and testing of this bot.
-- lodash: `npm install lodash`
-- request: used by the URL title script, can be installed with `npm install request`
+- node.js
+- npm
+- Run `npm install` to install the dependencies listed in `package.json`
 
 Configuration
 -------------
