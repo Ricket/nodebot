@@ -179,8 +179,8 @@ var irc = global.nodebot = (function () {
                                 fs: fs,
                                 require: require,
                                 util: util,
-                                _: _,
                                 Buffer: Buffer,
+                                _: require('lodash'),
                                 regexFactory: require('./regexFactory'),
                                 listen: function (dataRegex, callback, once, prefixed) {
                                     if (!_.isRegExp(dataRegex)) {
