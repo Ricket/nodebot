@@ -40,8 +40,8 @@ please refer to the top and contents of each script to find out what it does.
 Each script has a comment at the top clearly explaining what the script does and
 each command it makes available.
 
-To trigger a script action, you can say "<botname>, <action>" or
-"<prefix><action>" where prefix is set in the config file.  For example,
+To trigger a script action, you can say "{botname}, {action}" or
+"{prefix}{action}" where prefix is set in the config file.  For example,
 "nodebot, help" or "~help". Some scripts don't react this way; the "say" script,
 for example, doesn't require a prefix, so you can simply write "say something"
 and the bot will reply "something".
