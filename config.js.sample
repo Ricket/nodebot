@@ -14,7 +14,7 @@ global.nodebot_prefs = {
     nickserv_hostname: 'NickServ@services\\.',
     nickserv_password: 'password',
     
-    command_prefix: '~', /* not yet implemented; ~ is the hardcoded prefix */
+    command_prefix: '~',
     server: 'irc.freenode.net',
     port: 6667,
     secret: 'secret', /* password to become admin */
