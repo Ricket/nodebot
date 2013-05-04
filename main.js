@@ -113,6 +113,8 @@ var irc = global.nodebot = (function () {
                 }
             }
         }
+        
+        pingServer();
     }
 
     function sanitize(data) {
