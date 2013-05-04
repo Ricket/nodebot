@@ -18,6 +18,8 @@ global.nodebot_prefs = {
     server: 'irc.freenode.net',
     port: 6667,
     secret: 'secret', /* password to become admin */
+
+    ping_interval: 58000, /* ms to pass before sending a PING to stay connected */
     
     default_location: '90210',
     

@@ -26,6 +26,10 @@ var irc = global.nodebot = (function () {
 
     ignoredb = listdb.getDB('ignore');
 
+    var pingServer = _.debounce(function () {
+        irc.ping();
+    }, nodebot_prefs.ping_interval || 58000);
+
     function send(data) {
         if (!data || data.length == 0) {
             console.error("ERROR tried to send no data");
@@ -35,6 +39,7 @@ var irc = global.nodebot = (function () {
             socket.write(data + '\r\n', 'utf8', function () {
                 console.log("-> " + data);
             });
+            pingServer();
         }
     }
 
@@ -216,8 +221,11 @@ var irc = global.nodebot = (function () {
         },
 
         /* IRC COMMANDS: */
+        ping: function (server) {
+            send("PING " + (server || nodebot_prefs.server));
+        },
         pong: function (server) {
-            send("PONG :" + server);
+            send("PONG " + (server || nodebot_prefs.server));
         },
         join: function (channel, key) {
             var cmd = "JOIN :" + sanitize(channel);
