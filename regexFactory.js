@@ -26,7 +26,7 @@ function makePrefix(prefixed) {
         return "(?:"
             + escapeRegExp(nodebot_prefs.command_prefix) + " ?"
             + "|"
-            + escapeRegExp(nodebot_prefs.nickname) + "[:,]? "
+            + escapeRegExp(nodebot_prefs.nickname) + " *[:,]? +"
             + ")"
             + (prefixed === "optional" ? "?" : "");
     }
