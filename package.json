@@ -13,10 +13,10 @@
         "bot"
     ],
     "dependencies": {
-        "lodash": "~1.2.0",
-        "request": "~2.20.0"
+        "lodash": "~2.4.1",
+        "request": "~2.30.0"
     },
     "engines": {
-        "node": "~0.10.4"
+        "node": "~0.10.22"
     }
 }

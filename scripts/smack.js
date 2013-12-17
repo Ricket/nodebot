@@ -3,14 +3,16 @@
 
 // This script handles the following functions:
 //     ~smack user - smacks user with a random object
+//     ~slap user - slaps user with a random object
 
-var smackThings = ["smelly fish", "tin pot", "frying pan", "mouse",
+var verbs = ["smack", "slap", "hit", "pummel"],
+    smackThings = ["smelly fish", "tin pot", "frying pan", "mouse",
             "keyboard", "fly swatter", "old boot"],
     pronouns = ["me", "you", "himself", "herself", "itself", "yourself",
             "self", nodebot_prefs.nickname];
 
 function randomThing() {
-    return smackThings[Math.floor(Math.random()*smackThings.length)];
+    return _.sample(smackThings);
 }
 
 function isPronoun(str) {
@@ -19,17 +21,19 @@ function isPronoun(str) {
     });
 }
 
-function smack(recipient, replyTo) {
-    irc.action(replyTo, "smacks " + recipient + " with a " + randomThing() + ".");
+function smack(verb, recipient, replyTo) {
+    irc.action(replyTo, verb + "s " + recipient + " with a " + randomThing() + ".");
 }
 
-listen(regexFactory.startsWith("smack"), function(match, data, replyTo, from) {
-    var target = match[1].trim();
+_.each(verbs, function(verb) {
+    listen(regexFactory.startsWith(verb), function(match, data, replyTo, from) {
+        var target = match[1].trim();
 
-    if (isPronoun(target)) {
-        smack(from, replyTo);
-    } else {
-        smack(target, replyTo);
-    }
+        if (isPronoun(target)) {
+            smack(verb, from, replyTo);
+        } else {
+            smack(verb, target, replyTo);
+        }
+    });
 });
 
