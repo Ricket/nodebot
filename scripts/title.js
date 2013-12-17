@@ -9,12 +9,14 @@ var request = require('request'),
     fs = require('fs'),
     exec = require('child_process').exec;
 
-listen(/PRIVMSG [^ ]+ :.*\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?]))/i, function(match, data, replyTo) {
+listen(/PRIVMSG [^ ]+ :.*?\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?]))/i, function(match, data, replyTo) {
     var url = match[1];
 
     if(url.indexOf('http') != 0) {
-        url = 'https://' + url;
+        url = 'http://' + url;
     }
+
+    console.log('title: Found url: ' + url);
 
     var requestObject = {
         uri: url,
