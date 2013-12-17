@@ -32,9 +32,9 @@ function makePrefix(prefixed) {
     }
 }
 
-function matchAny(strings) {
+function matchAny(strings, escaped) {
     return "(?:"
-        + _.map(strings, function (s) { return escapeRegExp(s); }).join("|")
+        + _.map(strings, function (s) { return (escaped === false) ? "(?:" + s + ")" : escapeRegExp(s); }).join("|")
         + ")";
 }
 
@@ -49,5 +49,11 @@ exports.startsWith = function (keywords, prefixed) {
     keywords = ensureArray(keywords);
     return new RegExp(
         "PRIVMSG [^ ]+ :" + makePrefix(prefixed) + matchAny(keywords) + "\\b ?(.*)$", "i");
+};
+
+exports.matches = function (regexStrings, prefixed) {
+    regexStrings = ensureArray(regexStrings);
+    return new RegExp(
+        "PRIVMSG [^ ]+ :" + makePrefix(prefixed) + matchAny(regexStrings, false), "i");
 };
 
