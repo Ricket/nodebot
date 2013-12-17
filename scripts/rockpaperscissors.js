@@ -8,7 +8,7 @@ function isValidRPS(choice) {
     return choice.length === 1 && "rps".indexOf(choice) !== -1;
 }
 
-listen(regexFactory.startsWith("rps"), function(match, data, replyTo) {
+listen(regexFactory.startsWith("rps"), function(match, data, replyTo, from) {
     var botChoice = Math.floor(Math.random() * 3);
     var playerChoice = match[1].toLowerCase();
 
@@ -31,7 +31,7 @@ listen(regexFactory.startsWith("rps"), function(match, data, replyTo) {
         (playerChoice == 'p' && botChoice == 0) ||
         (playerChoice == 's' && botChoice == 1)
         ) {
-        output += "You win!";
+        output += from + " wins!";
     } else if(
         (playerChoice == 'r' && botChoice == 0) ||
         (playerChoice == 'p' && botChoice == 1) ||
@@ -39,7 +39,7 @@ listen(regexFactory.startsWith("rps"), function(match, data, replyTo) {
         ) {
         output += "We tied. How about a nice game of chess?";
     } else {
-        output += "You lose. :-P";
+        output += from + " loses. :-P";
     }
 
     irc.action(replyTo, output);
