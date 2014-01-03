@@ -14,15 +14,21 @@ function isTails(number) {
     return !isHeads(number);
 }
 
+function isTwoHeaded(number) {
+    return isHeads(number) && Math.abs(number - 0.1337) < 0.009001;
+}
+
 function flipCoin(replyTo, from, expectFunction) {
-    irc.action(replyTo, "flips a coin...");
+    var flip = Math.random(),
+        message = from + ": " + (isHeads(flip) ? "Heads!" : "Tails!");
+    
+    if (expectFunction) {
+        message += expectFunction(flip) ? " You win!" : " You lose.";
+    }
+
+    var flipMessage = isTwoHeaded(flip) ? "flips a two-headed coin..." : "flips a coin...";
+    irc.action(replyTo, flipMessage);
     setTimeout(function() {
-        var flip = Math.random(),
-            message = from + ": " + (isHeads(flip) ? "Heads!" : "Tails!");
-        
-        if (expectFunction) {
-            message += expectFunction(flip) ? " You win!" : " You lose.";
-        }
         irc.privmsg(replyTo, message);
     }, 1000);
 }
