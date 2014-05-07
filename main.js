@@ -95,7 +95,7 @@ var irc = global.nodebot = (function () {
             }
         }
 
-        var match, regex;
+        var match, regex, listenerRequestStop;
         for (i = 0; i < listeners.length; i++) {
             match = listeners[i][0].exec(data);
 
@@ -103,13 +103,16 @@ var irc = global.nodebot = (function () {
                 try {
                     // TODO move data to the end since it is least commonly needed
                     // and replyTo to the front, since it is always needed
-                    listeners[i][1](match, data, replyTo, from);
+                    listenerRequestStop = listeners[i][1](match, data, replyTo, from);
                 } catch (err) {
                     console.log("Caught error in script " + listeners[i][3] + ": " + err);
                 }
                 if (listeners[i][2] /* once */) {
                     listeners.splice(i, 1);
                     i--;
+                }
+                if (listenerRequestStop) {
+                    break;
                 }
             }
         }
@@ -167,53 +170,53 @@ var irc = global.nodebot = (function () {
             uncacheModules();
 
             listeners = [];
-            scripts = fs.readdirSync('scripts');
-            if (scripts) {
-                for (i = 0; i < scripts.length; i++) {
-                    if (scripts[i].substr(-3) == '.js' &&
-                            scripts[i].substr(-9) != '.child.js') {
-                        console.log("Loading script " + scripts[i] + "...");
-                        script = fs.readFileSync('scripts/' + scripts[i]);
-                        if (script) {
-                            var scriptName = scripts[i];
-                            var sandbox = {
-                                irc: irc,
-                                nodebot_prefs: nodebot_prefs,
-                                console: console,
-                                setTimeout: setTimeout,
-                                setInterval: setInterval,
-                                vm: vm,
-                                fs: fs,
-                                require: require,
-                                util: util,
-                                Buffer: Buffer,
-                                _: require('lodash'),
-                                regexFactory: require('./regexFactory'),
-                                listen: function (dataRegex, callback, once, prefixed) {
-                                    if (!_.isRegExp(dataRegex)) {
-                                        console.err("Error in script " + scripts[i] + ": first parameter to listen is not a RegExp object. Use regexFactory.");
-                                        return;
-                                    }
-                                    once = !!once;
-                                    if (typeof prefixed === "undefined" || prefixed === null) {
-                                        prefixed = true;
-                                    }
-                                    listeners.push([dataRegex, callback, once, prefixed, scriptName]);
-                                }
-                            };
-                            try {
-                                vm.runInNewContext(script, sandbox, scripts[i]);
-                            } catch (err) {
-                                console.log("Error in script " + scripts[i] + ": " + err);
-                                for (j = 0; j < listeners.length; j++) {
-                                    if (listeners[j][3] == scriptName) {
-                                        listeners.splice(j, 1);
-                                        j--;
-                                    }
-                                }
+            scripts = require('./scripts');
+            for (i = 0; i < scripts.length; i++) {
+                console.log("Loading script " + scripts[i] + "...");
+                script = fs.readFileSync('scripts/' + scripts[i] + '.js');
+                if (script) {
+                    var scriptName = scripts[i];
+                    var sandbox = {
+                        irc: irc,
+                        nodebot_prefs: nodebot_prefs,
+                        console: console,
+                        setTimeout: setTimeout,
+                        clearTimeout: clearTimeout,
+                        setInterval: setInterval,
+                        clearInterval: clearInterval,
+                        vm: vm,
+                        fs: fs,
+                        process: process,
+                        require: require,
+                        util: util,
+                        Buffer: Buffer,
+                        _: require('lodash'),
+                        regexFactory: require('./regexFactory'),
+                        listen: function (dataRegex, callback, once, prefixed) {
+                            if (!_.isRegExp(dataRegex)) {
+                                console.err("Error in script " + scripts[i] + ": first parameter to listen is not a RegExp object. Use regexFactory.");
+                                return;
+                            }
+                            once = !!once;
+                            if (typeof prefixed === "undefined" || prefixed === null) {
+                                prefixed = true;
+                            }
+                            listeners.push([dataRegex, callback, once, prefixed, scriptName]);
+                        }
+                    };
+                    try {
+                        vm.runInNewContext(script, sandbox, scripts[i]);
+                    } catch (err) {
+                        console.log("Error in script " + scripts[i] + ": " + err);
+                        for (j = 0; j < listeners.length; j++) {
+                            if (listeners[j][3] == scriptName) {
+                                listeners.splice(j, 1);
+                                j--;
                             }
                         }
                     }
+                } else {
+                    console.log("Error loading script " + scripts[i] + ": readFileSync returned empty/null/undefined");
                 }
             }
             try {
