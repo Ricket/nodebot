@@ -19,5 +19,7 @@ module.exports = [
     'smack',
     'tell',
     'time',
+
+    'twitter',
     'title'
 ];

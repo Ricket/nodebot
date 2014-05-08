@@ -14,7 +14,9 @@
     ],
     "dependencies": {
         "lodash": "~2.4.1",
-        "request": "~2.30.0"
+        "oauth": "~0.9.11",
+        "request": "~2.30.0",
+        "timeago": "~0.1.0"
     },
     "engines": {
         "node": "~0.10.22"
