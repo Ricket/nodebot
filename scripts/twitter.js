@@ -7,6 +7,11 @@
 var timeago = require('timeago'),
     oauth = require('oauth');
 
+function numberWithCommas(x) {
+    // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 require('./config.js');
 
 var twitterAccessToken = null;
@@ -33,7 +38,7 @@ twitterOauth.getOAuthAccessToken(
         }
         );
 
-listen(regexFactory.matches(".*?https://twitter.com/[a-z0-9]+/status/([0-9]+)", false),
+listen(regexFactory.matches(".*?(?:https?://)?(?:www\\.)?twitter.com/(?:#!/)?[a-z0-9]+/status/([0-9]+)", false),
         function(match, data, replyTo) {
     if (!twitterAccessToken) {
         irc.privmsg(replyTo, "Twitter API not yet connected");
@@ -41,7 +46,6 @@ listen(regexFactory.matches(".*?https://twitter.com/[a-z0-9]+/status/([0-9]+)", 
     }
 
     var tweetId = match[1];
-    var url = 
 
     twitterOauth.get(
         'https://api.twitter.com/1.1/statuses/show.json?id=' + tweetId,
@@ -64,9 +68,53 @@ listen(regexFactory.matches(".*?https://twitter.com/[a-z0-9]+/status/([0-9]+)", 
             try {
                 data = JSON.parse(data);
                 var prettyDate = timeago(data.created_at);
-                
+
                 irc.privmsg(replyTo, "" + data.user.name + " (@" +
                     data.user.screen_name + "), " + prettyDate + ": " + data.text);
+            } catch (e) {
+                irc.privmsg(replyTo, "Twitter error: " + e);
+            }
+
+        });
+
+    // do not allow title plugin to process url
+    return true;
+});
+
+listen(regexFactory.matches(".*?(?:https?://)?(?:www\\.)?twitter.com/(?:#!/)?([a-z0-9]+)/?", false),
+        function(match, data, replyTo) {
+    if (!twitterAccessToken) {
+        irc.privmsg(replyTo, "Twitter API not yet connected");
+        return;
+    }
+
+    var screenName = match[1];
+
+    twitterOauth.get(
+        'https://api.twitter.com/1.1/users/show.json?screen_name=' + screenName +
+        '&include_entities=false',
+        twitterAccessToken,
+        function (e, data, res) {
+            if (e) {
+                if (e.data) {
+                    try {
+                        var errorData = JSON.parse(e.data);
+                        if (errorData.errors && errorData.errors[0] &&
+                            errorData.errors[0].message) {
+                                irc.privmsg(replyTo, "Twitter error: " +
+                                    errorData.errors[0].message);
+                            }
+                    } catch (e) {}
+                }
+                console.error("Twitter error", e);
+                return;
+            }
+            try {
+                data = JSON.parse(data);
+
+                irc.privmsg(replyTo, "" + data.name + " (@" +
+                    data.screen_name + "; " + numberWithCommas(data.followers_count) + " followers): " + (data.description || "(no description)") +
+                    (data.url ? " -- " + data.url : ""));
             } catch (e) {
                 irc.privmsg(replyTo, "Twitter error: " + e);
             }
