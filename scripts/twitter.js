@@ -91,8 +91,7 @@ listen(regexFactory.matches(".*?(?:https?://)?(?:www\\.)?twitter.com/(?:#!/)?([a
     var screenName = match[1];
 
     twitterOauth.get(
-        'https://api.twitter.com/1.1/users/show.json?screen_name=' + screenName +
-        '&include_entities=false',
+        'https://api.twitter.com/1.1/users/show.json?screen_name=' + screenName,
         twitterAccessToken,
         function (e, data, res) {
             if (e) {
@@ -112,9 +111,18 @@ listen(regexFactory.matches(".*?(?:https?://)?(?:www\\.)?twitter.com/(?:#!/)?([a
             try {
                 data = JSON.parse(data);
 
+                var dataUrl = data.url;
+                if (data.entities && data.entities.url && data.entities.url.urls) {
+                    var entitiesUrls = data.entities.url.urls;
+                    for (var urlIdx = 0; urlIdx < entitiesUrls.length; urlIdx++) {
+                        if (entitiesUrls[urlIdx].url == dataUrl && entitiesUrls[urlIdx].expanded_url) {
+                            dataUrl = entitiesUrls[urlIdx].expanded_url;
+                        }
+                    }
+                }
                 irc.privmsg(replyTo, "" + data.name + " (@" +
                     data.screen_name + "; " + numberWithCommas(data.followers_count) + " followers): " + (data.description || "(no description)") +
-                    (data.url ? " -- " + data.url : ""));
+                    (dataUrl ? " -- " + dataUrl : ""));
             } catch (e) {
                 irc.privmsg(replyTo, "Twitter error: " + e);
             }
