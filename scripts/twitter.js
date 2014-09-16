@@ -69,8 +69,8 @@ listen(regexFactory.matches(".*?(?:https?://)?(?:www\\.)?twitter.com/(?:#!/)?[a-
                 data = JSON.parse(data);
                 var prettyDate = timeago(data.created_at);
 
-                irc.privmsg(replyTo, "" + data.user.name + " (@" +
-                    data.user.screen_name + "), " + prettyDate + ": " + data.text);
+                irc.privmsg(replyTo, "" + data.text + " -- " + data.user.name + " (@" +
+                    data.user.screen_name + "), " + prettyDate);
             } catch (e) {
                 irc.privmsg(replyTo, "Twitter error: " + e);
             }
