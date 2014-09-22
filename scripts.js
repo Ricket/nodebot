@@ -10,6 +10,7 @@ module.exports = [
     'excuse',
     'fire',
     'greet',
+    'googl',
     'help',
     'nickserv',
     'numbergame',

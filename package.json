@@ -13,6 +13,7 @@
         "bot"
     ],
     "dependencies": {
+        "goo.gl": "~0.1.2",
         "lodash": "~2.4.1",
         "oauth": "~0.9.11",
         "request": "~2.30.0",

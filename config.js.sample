@@ -25,7 +25,10 @@ global.nodebot_prefs = {
 
     /* bitly.js */
     bitly_username: '',
-    bitly_apikey: ''
+    bitly_apikey: '',
+
+    /* goo.gl see http://goo.gl/4DvFk */
+    googl_key: '',
 
     /* twitter */
     twitter_consumerkey: '',
