@@ -170,7 +170,14 @@ var irc = global.nodebot = (function () {
             uncacheModules();
 
             listeners = [];
+
+            var scriptsFilename = require.resolve('./scripts');
+            if (require.cache[scriptsFilename]) {
+                console.log('Deleting cached copy of scripts.js');
+                delete require.cache[scriptsFilename];
+            }
             scripts = require('./scripts');
+
             for (i = 0; i < scripts.length; i++) {
                 console.log("Loading script " + scripts[i] + "...");
                 script = fs.readFileSync('scripts/' + scripts[i] + '.js');
