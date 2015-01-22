@@ -7,6 +7,7 @@ module.exports = [
     'counter',
     'dice',
     'emoticons',
+    'eval',
     'excuse',
     'fire',
     'greet',

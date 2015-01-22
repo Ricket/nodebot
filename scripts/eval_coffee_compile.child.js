@@ -4,7 +4,8 @@
 // This is the helper script for eval.js
 
 var vm = require('vm'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    coffee = require('coffee-script');
 
 process.stdin.setEncoding('utf8');
 process.stdin.resume();
@@ -16,7 +17,8 @@ process.stdin.on('data', function (command) {
 
 process.stdin.on('end', function() {
     try {
-        var result = vm.runInNewContext(wholeCommand, {_: _});
+        // var result = vm.runInNewContext(wholeCommand, {_: _});
+        var result = coffee.compile(wholeCommand, {bare: true}).replace(/\n+$/, '');
         var stdout = "";
         if (_.isArray(result)) {
             stdout = "[" + result + "]";

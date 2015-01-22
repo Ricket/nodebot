@@ -6,20 +6,48 @@
 //                        sandbox
 
 var vm = require('vm'),
-    exec = require('child_process').exec;
+    spawn = require('child_process').spawn;
 
-listen(regexFactory.startsWith('eval'), function(match, data, replyTo) {
-    var child = exec('node scripts/eval.child.js',
-        { encoding: 'utf8',
-            timeout: 500 },
-        function (error, stdout, stderr) {
-            if (error != null) {
-                irc.privmsg(replyTo, stdout);
-            } else {
-                irc.privmsg(replyTo, "Result: " + stdout);
-            }
+var TIMEOUT = 5000,
+    spawnOptions = {
+    stdio: ['pipe', 'pipe', 'pipe'],
+    cwd: process.cwd(),
+    env: {},
+    detached: false
+};
+
+function doEval(childFile, userScript, replyTo) {
+    var child = spawn('node', [childFile], spawnOptions);
+
+    var timer = setTimeout(function () { child.kill('SIGKILL'); }, TIMEOUT);
+
+    child.stdout.setEncoding('utf8');
+    var result = "";
+    child.stdout.on('data', function (data) {
+        result += data;
+        result = result.substr(0, 512);
+    });
+    child.on('exit', function (code) {
+        clearTimeout(timer);
+        if (code === 0) {
+            irc.privmsg(replyTo, "Result: " + result);
+        } else if (result !== "") {
+            irc.privmsg(replyTo, "" + result);
         }
-    );
-    child.stdin.end(match[1]);
+    });
+    child.stdin.end(userScript);
+
+}
+
+listen(regexFactory.startsWith(['eval', 'js']), function(match, data, replyTo) {
+    doEval('scripts/eval.child.js', match[1], replyTo);
+});
+
+listen(regexFactory.startsWith(['cval', 'coffee']), function(match, data, replyTo) {
+    doEval('scripts/eval_coffee.child.js', match[1], replyTo);
+});
+
+listen(regexFactory.startsWith(['cc', 'coffeecompile']), function(match, data, replyTo) {
+    doEval('scripts/eval_coffee_compile.child.js', match[1], replyTo);
 });
 
