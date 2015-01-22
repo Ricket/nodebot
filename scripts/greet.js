@@ -15,14 +15,22 @@ function privmsg_throttled(replyTo, msg) {
     }
 }
 
-var HELLOS = ['hello', 'hi', 'howdy', 'hola'],
-    BYES = ['goodbye', 'bye', 'cya', 'adios', 'ttyl'];
+var HELLOS = ['hello', 'hi', 'hey', 'howdy', 'hola', 'good morning', 'good afternoon', 'good evening'],
+    BYES = ['goodbye', 'bye', 'cya', 'cya later', 'adios', 'ttyl'],
+    SUFFIXES = [nodebot_prefs.nickname, 'guys', 'all', 'folks'],
+    PUNCTUATION = ['!', '\\.', '\\.\\.\\.'];
 
-listen(regexFactory.startsWith(HELLOS, "optional"), function(match, data, replyTo) {
-    privmsg_throttled(replyTo, "Hello!");
-});
+listenWithResponse(permutations(HELLOS, SUFFIXES, PUNCTUATION), "Hello!");
+listenWithResponse(permutations(BYES, SUFFIXES, PUNCTUATION), "Bye!");
 
-listen(regexFactory.startsWith(BYES, "optional"), function(match, data, replyTo) {
-    privmsg_throttled(replyTo, "Goodbye!");
-});
+function permutations(greetings, suffixes, punctuation) {
+    return "(?:" + greetings.join("|") + ")(?: " + suffixes.join("| ") + ")?" +
+        "(?:" + punctuation.join("|") + ")?";
+}
+
+function listenWithResponse(regexString, replyMessage) {
+    listen(regexFactory.matches(regexString, "optional", true), function(match, data, replyTo) {
+        privmsg_throttled(replyTo, replyMessage);
+    });
+}
 

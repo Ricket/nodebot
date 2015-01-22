@@ -51,9 +51,9 @@ exports.startsWith = function (keywords, prefixed) {
         "PRIVMSG [^ ]+ :" + makePrefix(prefixed) + matchAny(keywords) + "\\b ?(.*)$", "i");
 };
 
-exports.matches = function (regexStrings, prefixed) {
+exports.matches = function (regexStrings, prefixed, only) {
     regexStrings = ensureArray(regexStrings);
     return new RegExp(
-        "PRIVMSG [^ ]+ :" + makePrefix(prefixed) + matchAny(regexStrings, false), "i");
+        "PRIVMSG [^ ]+ :" + makePrefix(prefixed) + matchAny(regexStrings, false) + (only ? "$" : ""), "i");
 };
 
