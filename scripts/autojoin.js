@@ -24,27 +24,27 @@ function isChannelName(str) {
     return str[0] === "#";
 }
 
-listen(regexFactory.startsWith("join"), function(match, data, replyTo) {
+listen_admin(regexFactory.startsWith("join"), function(match, data, replyTo) {
     if (isChannelName(match[1])) {
         irc.join(match[1]);
     }
 });
 
-listen(regexFactory.startsWith("autojoin"), function(match, data, replyTo) {
+listen_admin(regexFactory.startsWith("autojoin"), function(match, data, replyTo) {
     if (isChannelName(match[1])) {
         db.add(match[1]);
         irc.privmsg(replyTo, "Added " + match[1] + " to autojoin list");
     }
 });
 
-listen(regexFactory.startsWith("unautojoin"), function(match, data, replyTo) {
+listen_admin(regexFactory.startsWith("unautojoin"), function(match, data, replyTo) {
     if (isChannelName(match[1])) {
         db.remove(match[1], true /* (ignore case) */);
         irc.privmsg(replyTo, "Removed " + match[1] + " from autojoin list");
     }
 });
 
-listen(regexFactory.startsWith("part"), function(match, data, replyTo) {
+listen_admin(regexFactory.startsWith("part"), function(match, data, replyTo) {
     if (isChannelName(match[1])) {
         irc.part(match[1]);
     } else if (match[1].length === 0 && isChannelName(replyTo)) {
