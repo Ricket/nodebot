@@ -7,6 +7,7 @@ module.exports = [
     'colortest',
     'counter',
     'dice',
+    'doyou',
     'emoticons',
     'eval',
     'excuse',
