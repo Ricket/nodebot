@@ -9,19 +9,19 @@
 var waiting = false;
 function privmsg_throttled(replyTo, msg) {
     if(!waiting) {
-        irc.privmsg(replyTo, msg);
+        irc.privmsg(replyTo, msg, false);
         waiting = true;
-        setTimeout(function(){ waiting = false; }, 3000);
+        setTimeout(function(){ waiting = false; }, 10000);
     }
 }
 
-var HELLOS = ['hello', 'hi', 'hey', 'howdy', 'hola', 'good morning', 'good afternoon', 'good evening'],
-    BYES = ['goodbye', 'bye', 'cya', 'cya later', 'adios', 'ttyl'],
-    SUFFIXES = [nodebot_prefs.nickname, 'guys', 'all', 'folks'],
-    PUNCTUATION = ['!', '\\.', '\\.\\.\\.'];
+var HELLOS = ['hello', 'hi', 'hey', 'howdy', 'hola', 'good ?morning', 'good ?afternoon', 'good ?evening'],
+    BYES = ['goodbye', 'good ?night', 'bye', 'cya', 'cya later', 'adios', 'ttyl', 'night'],
+    SUFFIXES = [nodebot_prefs.nickname, 'guys', 'all', 'folks', 'every ?body', 'every ?one', 'there'],
+    PUNCTUATION = ['!+', '\\.+'];
 
-listenWithResponse(permutations(HELLOS, SUFFIXES, PUNCTUATION), "Hello!");
-listenWithResponse(permutations(BYES, SUFFIXES, PUNCTUATION), "Bye!");
+listenWithResponse(permutations(HELLOS, SUFFIXES, PUNCTUATION), "Hello! (^_^)/");
+listenWithResponse(permutations(BYES, SUFFIXES, PUNCTUATION), "Bye! \\( \uFF65_\uFF65)");
 
 function permutations(greetings, suffixes, punctuation) {
     return "(?:" + greetings.join("|") + ")(?: " + suffixes.join("| ") + ")?" +
