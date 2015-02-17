@@ -10,6 +10,7 @@
 //     ~unignore user - the bot will once more respond to messages from [user]
 //     ~reload - reload scripts
 
+require('./config.js');
 var admins = require('./lib/admins');
 
 listen(regexFactory.startsWith("secret"), function(match, data, replyTo, from) {

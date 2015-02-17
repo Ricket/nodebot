@@ -4,6 +4,7 @@
 // This script handles the following functions:
 //     a twitter url - look up the tweet and announce it
 
+require('./config.js');
 var timeago = require('timeago'),
     oauth = require('oauth');
 
@@ -11,8 +12,6 @@ function numberWithCommas(x) {
     // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-
-require('./config.js');
 
 var twitterAccessToken = null;
 var twitterOauth = new oauth.OAuth2(

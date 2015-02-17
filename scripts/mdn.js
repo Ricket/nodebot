@@ -4,10 +4,13 @@
 // This script handles the following functions:
 //     ~mdn - search the Mozilla Developer Network webpage and return first result
 
+require('./config.js');
 var entities = require('./lib/entities'),
     fs = require('fs'),
     exec = require('child_process').exec,
     googl = require('goo.gl');
+
+googl.setKey(nodebot_prefs.google_api_key);
 
 var request = require('request').defaults({
     strictSSL: false,

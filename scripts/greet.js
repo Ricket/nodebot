@@ -6,6 +6,8 @@
 //     join in on greeting someone when someone else greets them.
 //     Same thing for "goodbye" and "bye"
 
+require('./config.js');
+
 var waiting = false;
 function privmsg_throttled(replyTo, msg) {
     if(!waiting) {

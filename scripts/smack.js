@@ -5,6 +5,8 @@
 //     ~smack user - smacks user with a random object
 //     ~slap user - slaps user with a random object
 
+require('./config.js');
+
 var verbs = ["smack", "slap", "hit", "pummel"],
     smackThings = ["smelly fish", "tin pot", "frying pan", "mouse",
             "keyboard", "fly swatter", "old boot"],

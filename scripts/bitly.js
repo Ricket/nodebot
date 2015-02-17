@@ -4,6 +4,7 @@
 /* Unfortunately the bitly library is currently broken, so the following
  * not only is incomplete, but wouldn't work anyway.
 
+require('./config.js');
 var Bitly = require('bitly').Bitly;
 var bitly = new Bitly(nodebot_prefs.bitly_username, nodebot_prefs.bitly_apikey);
 
