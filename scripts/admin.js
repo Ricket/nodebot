@@ -10,62 +10,42 @@
 //     ~unignore user - the bot will once more respond to messages from [user]
 //     ~reload - reload scripts
 
-var db = require('./lib/listdb').getDB('admins');
-
-function isAdmin(username) {
-    return db.hasValue(username, true);
-}
-
-function addAdmin(username) {
-    db.add(username);
-}
-
-function removeAdmin(username) {
-    db.remove(username, true);
-}
+var admins = require('./lib/admins');
 
 listen(regexFactory.startsWith("secret"), function(match, data, replyTo, from) {
-    if (isAdmin(from)) {
+    if (admins.is(from)) {
         irc.privmsg(replyTo, "You are already an admin.");
     } else if (match[1] === nodebot_prefs.secret) {
-        addAdmin(from);
+        admins.add(from);
         irc.privmsg(replyTo, "You are now an admin.");
     }
 });
 
 listen(regexFactory.only("admins"), function(match, data, replyTo) {
-    irc.privmsg(replyTo, "Admins: " + db.getAll().join(","));
+    irc.privmsg(replyTo, "Admins: " + admins.list());
 });
 
-function listen_admin(regex, listener) {
-    listen(regex, function(match, data, replyTo, from) {
-        if (isAdmin(from)) {
-            listener(match, data, replyTo, from);
-        }
-    });
-}
-
 listen_admin(regexFactory.startsWith("makeadmin"), function(match, data, replyTo, from) {
-    if (isAdmin(match[1])) {
+    if (admins.is(match[1])) {
         irc.privmsg(replyTo, match[1] + " is already an admin.");
     } else {
-        addAdmin(match[1]);
+        admins.add(match[1]);
         irc.privmsg(replyTo, match[1] + " is now an admin.");
     }
 });
 
 listen_admin(regexFactory.startsWith("unadmin"), function(match, data, replyTo, from) {
-    if (isAdmin(match[1])) {
-        removeAdmin(match[1]);
+    if (admins.is(match[1])) {
+        admins.remove(match[1]);
         irc.privmsg(replyTo, match[1] + " is no longer an admin.");
     } else {
-        irc.privmsg(replyTo, match[1] + " isn't an admin");
+        irc.privmsg(replyTo, match[1] + " isn't an admin.");
     }
 });
 
 listen_admin(regexFactory.startsWith("ignore"), function(match, data, replyTo, from) {
-    if (isAdmin(match[1])) {
-        irc.privmsg(replyTo, match[1] + " is an admin, can't be ignored");
+    if (admins.is(match[1])) {
+        irc.privmsg(replyTo, match[1] + " is an admin, can't be ignored.");
     } else {
         irc.ignore(match[1]);
         irc.privmsg(replyTo, match[1] + " is now ignored.");
@@ -74,7 +54,7 @@ listen_admin(regexFactory.startsWith("ignore"), function(match, data, replyTo, f
 
 listen_admin(regexFactory.startsWith("unignore"), function(match, data, replyTo, from) {
     irc.unignore(match[1]);
-    irc.privmsg(replyTo, match[1] + " unignored");
+    irc.privmsg(replyTo, match[1] + " unignored.");
 });
 
 listen_admin(regexFactory.only("ignorelist"), function (match, data, replyTo) {
@@ -94,7 +74,7 @@ listen_admin(regexFactory.only("git pull"), function(match, data, replyTo) {
 
 listen_admin(regexFactory.only('reload'), function(match, data, replyTo) {
     irc.loadScripts();
-    irc.privmsg(replyTo, "Reloaded scripts");
+    irc.privmsg(replyTo, "Reloaded scripts.");
 });
 
 listen_admin(regexFactory.startsWith('raw'), function(match) {

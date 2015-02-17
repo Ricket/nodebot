@@ -9,7 +9,8 @@ var util = require('util'),
     repl = require('repl'),
     _ = require('lodash'),
     regexFactory = require('./regexFactory'),
-    listdb = require('./lib/listdb');
+    listdb = require('./lib/listdb'),
+    admins = require('./lib/admins');
 
 var irc = global.nodebot = (function () {
     var buffer, ignoredb, listeners, socket;
@@ -218,6 +219,13 @@ var irc = global.nodebot = (function () {
                                 prefixed = true;
                             }
                             listeners.push([dataRegex, callback, once, prefixed, scriptName]);
+                        },
+                        listen_admin: function (dataRegex, callback, once, prefixed) {
+                            sandbox.listen(dataRegex, function(match, data, replyTo, from) {
+                                if (admins.is(from)) {
+                                    callback(match, data, replyTo, from);
+                                }
+                            }, once, prefixed);
                         }
                     };
                     try {
