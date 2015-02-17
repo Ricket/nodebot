@@ -111,7 +111,7 @@ var irc = global.nodebot = (function () {
                     // and replyTo to the front, since it is always needed
                     listenerRequestStop = listeners[i][1](match, data, replyTo, from);
                 } catch (err) {
-                    console.log("Caught error in script " + listeners[i][3] + ": " + err);
+                    console.log("Caught error in script " + listeners[i][4] + ": " + err);
                 }
                 if (listeners[i][2] /* once */) {
                     listeners.splice(i, 1);
