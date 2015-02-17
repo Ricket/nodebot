@@ -28,7 +28,11 @@ global.nodebot_prefs = {
     bitly_username: '',
     bitly_apikey: '',
 
-    /* Google API - https://code.google.com/apis/console/?noredirect */
+    /* Google API - https://code.google.com/apis/console/?noredirect
+     * Currently used for the goo.gl library. Visit the above URL and register
+     * an application. Enable the URL Shortener API. Copy and paste the API key
+     * from the API Access page into here.
+     */
     google_api_key: '',
 
     /* twitter */
