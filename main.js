@@ -8,6 +8,7 @@ var util = require('util'),
     vm = require('vm'),
     repl = require('repl'),
     _ = require('lodash'),
+    regexFactory = require('./regexFactory'),
     listdb = require('./lib/listdb');
 
 var irc = global.nodebot = (function () {
@@ -37,7 +38,12 @@ var irc = global.nodebot = (function () {
             console.error("ERROR tried to send data > 510 chars in length: " + data);
         } else {
             socket.write(data + '\r\n', 'utf8', function () {
-                console.log("-> " + data);
+                var sensitiveMatch = regexFactory.password().exec(data);
+                if (sensitiveMatch) {
+                    console.log("-> " + sensitiveMatch[1] + "***");
+                } else {
+                    console.log("-> " + data);
+                }
             });
             pingServer();
         }
@@ -201,7 +207,7 @@ var irc = global.nodebot = (function () {
                         util: util,
                         Buffer: Buffer,
                         _: require('lodash'),
-                        regexFactory: require('./regexFactory'),
+                        regexFactory: regexFactory,
                         listen: function (dataRegex, callback, once, prefixed) {
                             if (!_.isRegExp(dataRegex)) {
                                 console.err("Error in script " + scripts[i] + ": first parameter to listen is not a RegExp object. Use regexFactory.");

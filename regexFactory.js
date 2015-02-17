@@ -38,6 +38,11 @@ function matchAny(strings, escaped) {
         + ")";
 }
 
+exports.password = function () {
+    return new RegExp(
+            "^(PASS |PRIVMSG " + nodebot_prefs.nickserv_nickname + " :IDENTIFY )", "i");
+};
+
 exports.only = function (keywords, prefixed) {
     keywords = ensureArray(keywords);
 
