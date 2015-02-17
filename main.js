@@ -156,9 +156,12 @@ var irc = global.nodebot = (function () {
         sanitize: function (data) {
             return sanitize(data);
         },
-        connect: function (host, port, nickname, username, realname) {
+        connect: function (host, port, nickname, username, realname, serverpass) {
             port = port || 6667;
             socket.connect(port, host, function () {
+                if (serverpass) {
+                    send('PASS ' + sanitize(serverpass));
+                }
                 send('NICK ' + sanitize(nickname));
                 send('USER ' + sanitize(username) + ' localhost * ' + sanitize(realname));
             });
@@ -290,6 +293,8 @@ process.on('uncaughtException', function (err) {
 });
 
 irc.loadScripts();
-irc.connect(nodebot_prefs.server, nodebot_prefs.port, nodebot_prefs.nickname, nodebot_prefs.username, nodebot_prefs.realname);
+irc.connect(nodebot_prefs.server, nodebot_prefs.port, nodebot_prefs.nickname,
+        nodebot_prefs.username, nodebot_prefs.realname,
+        nodebot_prefs.serverpass);
 
 repl.start({ prompt: '> ', ignoreUndefined: true });
