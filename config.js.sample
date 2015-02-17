@@ -27,8 +27,8 @@ global.nodebot_prefs = {
     bitly_username: '',
     bitly_apikey: '',
 
-    /* goo.gl see http://goo.gl/4DvFk */
-    googl_key: '',
+    /* Google API - https://code.google.com/apis/console/?noredirect */
+    google_api_key: '',
 
     /* twitter */
     twitter_consumerkey: '',

@@ -1,7 +1,7 @@
 {
     "name": "nodebot",
     "private": true,
-    "version": "0.2.0",
+    "version": "0.3.0",
     "author": "Richard Carter <richard@richardcarter.org>",
     "description": "IRC bot written in node.js",
     "repository": {
@@ -13,14 +13,15 @@
         "bot"
     ],
     "dependencies": {
+        "coffee-script": "~1.9.0",
         "goo.gl": "~0.1.2",
-        "coffee-script": "~1.7.1",
-        "lodash": "~2.4.1",
-        "oauth": "~0.9.11",
-        "request": "~2.30.0",
-        "timeago": "~0.1.0"
+        "irc-colors": "1.1.0",
+        "lodash": "~3.0.0",
+        "oauth": "~0.9.12",
+        "request": "~2.51.0",
+        "timeago": "~0.2.0"
     },
     "engines": {
-        "node": "~0.10.22"
+        "node": "~0.10.36"
     }
 }

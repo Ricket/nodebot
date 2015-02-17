@@ -4,6 +4,7 @@ module.exports = [
     'bitly',
     'botsnack',
     'coin',
+    'colortest',
     'counter',
     'dice',
     'emoticons',
@@ -13,6 +14,7 @@ module.exports = [
     'greet',
     'googl',
     'help',
+    'mdn',
     'nickserv',
     'numbergame',
     'ping',
@@ -21,7 +23,6 @@ module.exports = [
     'smack',
     'tell',
     'time',
-
     'twitter',
     'title'
 ];
