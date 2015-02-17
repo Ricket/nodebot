@@ -7,10 +7,15 @@ var util = require('util'),
     fs = require('fs'),
     vm = require('vm'),
     repl = require('repl'),
-    _ = require('lodash'),
-    regexFactory = require('./regexFactory'),
-    listdb = require('./lib/listdb'),
-    admins = require('./lib/admins');
+    _ = require('lodash');
+
+function uncacheModules() {
+    // Clear the module cache
+    var key;
+    for (key in require.cache) {
+        delete require.cache[key];
+    }
+}
 
 var irc = global.nodebot = (function () {
     var buffer, ignoredb, listeners, socket;
@@ -26,7 +31,7 @@ var irc = global.nodebot = (function () {
 
     listeners = [];
 
-    ignoredb = listdb.getDB('ignore');
+    ignoredb = require('./lib/listdb').getDB('ignore');
 
     var pingServer = _.debounce(function () {
         irc.ping();
@@ -39,7 +44,7 @@ var irc = global.nodebot = (function () {
             console.error("ERROR tried to send data > 510 chars in length: " + data);
         } else {
             socket.write(data + '\r\n', 'utf8', function () {
-                var sensitiveMatch = regexFactory.password().exec(data);
+                var sensitiveMatch = require('./regexFactory').password().exec(data);
                 if (sensitiveMatch) {
                     console.log("-> " + sensitiveMatch[1] + "***");
                 } else {
@@ -144,14 +149,6 @@ var irc = global.nodebot = (function () {
             .replace(/[^\x02-\x03|\x16|\x20-\x7e]/g, "");
     }
 
-    function uncacheModules() {
-        // Clear the module cache
-        var key;
-        for (key in require.cache) {
-            delete require.cache[key];
-        }
-    }
-
     return {
         /* The following function gives full power to scripts;
          * you may want to no-op this function for security reasons, if you
@@ -181,11 +178,6 @@ var irc = global.nodebot = (function () {
 
             listeners = [];
 
-            var scriptsFilename = require.resolve('./scripts');
-            if (require.cache[scriptsFilename]) {
-                console.log('Deleting cached copy of scripts.js');
-                delete require.cache[scriptsFilename];
-            }
             scripts = require('./scripts');
 
             for (i = 0; i < scripts.length; i++) {
@@ -208,7 +200,7 @@ var irc = global.nodebot = (function () {
                         util: util,
                         Buffer: Buffer,
                         _: require('lodash'),
-                        regexFactory: regexFactory,
+                        regexFactory: require('./regexFactory'),
                         listen: function (dataRegex, callback, once, prefixed) {
                             if (!_.isRegExp(dataRegex)) {
                                 console.err("Error in script " + scripts[i] + ": first parameter to listen is not a RegExp object. Use regexFactory.");
@@ -222,7 +214,7 @@ var irc = global.nodebot = (function () {
                         },
                         listen_admin: function (dataRegex, callback, once, prefixed) {
                             sandbox.listen(dataRegex, function(match, data, replyTo, from) {
-                                if (admins.is(from)) {
+                                if (require('./lib/admins').is(from)) {
                                     callback(match, data, replyTo, from);
                                 }
                             }, once, prefixed);
