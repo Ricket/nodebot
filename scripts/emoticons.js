@@ -23,3 +23,7 @@ listen(regexFactory.only("be cool"), function (match, data, replyTo) {
     }, 1500);
 });
 
+listen(regexFactory.only("shrug", "optional"), function (match, data, replyTo) {
+    irc.privmsg(replyTo, "\u00AF\\_(\u30C4)_/\u00AF", false);
+});
+
