@@ -11,12 +11,15 @@ function doI() {
 function listenBinary(questionPrefix, yesPrefix, noPrefix) {
     listen(regexFactory.matches(questionPrefix + " ([^?]+)\\?*"), function (match, data, replyTo) {
         if (doI()) {
-            irc.privmsg(replyTo, yesPrefix + " " + match[1] + ".");
+            irc.privmsg(replyTo, yesPrefix + " " + match[1].trim() + ".");
         } else {
-            irc.privmsg(replyTo, noPrefix + " " + match[1] + ".");
+            irc.privmsg(replyTo, noPrefix + " " + match[1].trim() + ".");
         }
     });
 }
 
 listenBinary("do you", "Yes, I", "No, I don't");
+listenBinary("are you", "Yes, I am", "No, I'm not");
+listenBinary("were you", "Yes, I was", "No, I wasn't");
+listenBinary("am I", "Yes, you are", "No, you aren't");
 
