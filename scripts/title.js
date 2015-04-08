@@ -63,8 +63,11 @@ listen(/PRIVMSG [^ ]+ :.*?\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2
             }
         });
 
-        var pageBody = "";
+        var pageBody = "", foundTitle = false;
         req.on('data', function (data) {
+            if (foundTitle) {
+                return;
+            }
             pageBody += data;
             if (pageBody.length > maxSize) {
                 console.log('Page size exceeded limit (' + pageBody.length + ')');
@@ -75,6 +78,7 @@ listen(/PRIVMSG [^ ]+ :.*?\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2
 
             if(titleMatch && titleMatch[1]) {
                 req.abort();
+                foundTitle = true;
 
                 var title = titleMatch[1];
                 
