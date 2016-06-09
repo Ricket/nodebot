@@ -10,6 +10,6 @@
 // This script handles the following functions:
 //     Responds to the PING command with a PONG command.
 
-listen(/^PING :(.+)$/i, function(match) {
+listen(/^PING :(.+)/i, function(match) {
     irc.pong(match[1]);
 });
