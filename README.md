@@ -13,7 +13,9 @@ Configuration
 
 Copy `config.js.sample` to `config.js` and then look in the file for all
 configuration options. You can disable scripts by renaming them to a different
-extension or deleting/moving them out of the scripts folder.
+extension or deleting/moving them out of the scripts folder. To specify a channel 
+**nodebot** must initialize by running it once to get the data folder. See 
+Channels for for more information.
 
 Running
 -------
@@ -48,6 +50,17 @@ and the bot will reply "something".
 
 For developing your own scripts, use the existing scripts as examples to make
 your own.
+
+Channels
+-------
+To join a channel edit `data/autojoin.txt` and add the hashtag. For more info
+on the data folder see the [README](data/README)
+
+__Example__
+```terminal
+#nodejs
+#javascript
+```
 
 License
 -------
